@@ -1,0 +1,283 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+<title>Reports - Admin</title>
+<!-- Load all CSS files -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-nav.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-reports.css') }}?v=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="admin-container fade-in">
+    <!-- HEADER -->
+    <div class="admin-header">
+        <h1><i class="fas fa-chart-bar"></i> REPORTS & ANALYTICS</h1>
+        <p><i class="fas fa-chart-line"></i> Business insights and performance metrics</p>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="admin-nav">
+        <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="{{ url_for('manage_hotels') }}"><i class="fas fa-hotel"></i> Hotels</a>
+        <a href="{{ url_for('manage_rooms') }}"><i class="fas fa-bed"></i> Rooms</a>
+        <a href="{{ url_for('manage_bookings') }}"><i class="fas fa-calendar-check"></i> Bookings</a>
+        <a href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Users</a>
+        <a href="{{ url_for('admin_reports') }}" class="active"><i class="fas fa-chart-bar"></i> Reports</a>
+        <a href="{{ url_for('logout') }}" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <!-- DATE FILTER -->
+    <div class="date-filter">
+        <div>
+            <label class="form-label"><i class="far fa-calendar"></i> Select Period</label>
+            <select id="periodSelect" class="form-control">
+                <option value="this_month" {% if period == 'this_month' %}selected{% endif %}>This Month</option>
+                <option value="last_month" {% if period == 'last_month' %}selected{% endif %}>Last Month</option>
+                <option value="this_year" {% if period == 'this_year' %}selected{% endif %}>This Year</option>
+                <option value="last_year" {% if period == 'last_year' %}selected{% endif %}>Last Year</option>
+                <option value="custom" {% if period == 'custom' %}selected{% endif %}>Custom Range</option>
+            </select>
+        </div>
+        <div id="customDates" class="custom-dates-container {% if period != 'custom' %}d-none{% endif %}">
+            <div>
+                <label class="form-label">From Date</label>
+                <input type="date" class="form-control" id="dateFrom" value="{{ date_from or '' }}" />
+            </div>
+            
+            <div>
+                <label class="form-label">To Date</label>
+                <input type="date" class="form-control" id="dateTo" value="{{ date_to or '' }}" />
+            </div>
+        </div>
+        <button class="filter-btn" onclick="applyFilter()">
+            <i class="fas fa-filter"></i> Apply Filter
+        </button>
+        
+        <a href="{{ url_for('generate_report_pdf') }}" class="download-btn">
+            <i class="fas fa-file-pdf"></i> Export PDF
+        </a>
+    </div>
+
+    <!-- MONTHLY SALES REPORT -->
+    <div class="report-card">
+        <div class="report-header">
+            <div class="report-title">
+                <i class="fas fa-chart-pie"></i> Monthly Sales Report
+            </div>
+            {% if monthly_growth > 0 %}
+            <span class="growth-positive">
+                <i class="fas fa-arrow-up"></i> {{ monthly_growth }}% growth
+            </span>
+            {% else %}
+            <span class="growth-negative">
+                <i class="fas fa-arrow-down"></i> {{ monthly_growth }}% decline
+            </span>
+            {% endif %}
+        </div>
+        
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value">£{{ "%.2f"|format(total_revenue|float) if total_revenue else "0.00" }}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Confirmed Bookings</div>
+                <div class="stat-value">{{ total_bookings or 0 }}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Average Booking Value</div>
+                <div class="stat-value">£{{ "%.2f"|format(avg_booking_value|float) if avg_booking_value else "0.00" }}</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h4><i class="fas fa-hotel"></i> Hotel Performance</h4>
+            <table class="table-chart">
+                <thead>
+                    <tr>
+                        <th>Hotel</th>
+                        <th>Bookings</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if hotel_performance %}
+                        {% for hotel in hotel_performance %}
+                        <tr>
+                            <td>{{ hotel.name or 'N/A' }} - {{ hotel.city or 'N/A' }}</td>
+                            <td>{{ hotel.bookings or 0 }}</td>
+                            <td><strong>£{{ "%.2f"|format(hotel.revenue|float) if hotel.revenue else "0.00" }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: #64748b; padding: 30px;">
+                                <i class="fas fa-chart-line" style="font-size: 40px; margin-bottom: 10px; display: block; color: #cbd5e1;"></i>
+                                <p>No hotel performance data available</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TOP CUSTOMERS REPORT -->
+    <div class="report-card">
+        <div class="report-header">
+            <div class="report-title">
+                <i class="fas fa-crown"></i> Top Customers
+            </div>
+            <span style="color: #f59e0b;">
+                <i class="fas fa-medal"></i> Loyalty Ranking
+            </span>
+        </div>
+        
+        <div class="chart-container">
+            <table class="table-chart">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Customer Name</th>
+                        <th>Email</th>
+                        <th>Total Bookings</th>
+                        <th>Total Spent</th>
+                        <th>Member Since</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if top_customers %}
+                        {% for customer in top_customers %}
+                        <tr>
+                            <td>
+                                {% if loop.index == 1 %}
+                                <span class="medal-gold">🥇</span>
+                                {% elif loop.index == 2 %}
+                                <span class="medal-silver">🥈</span>
+                                {% elif loop.index == 3 %}
+                                <span class="medal-bronze">🥉</span>
+                                {% else %}
+                                <span style="color: #64748b;">#{{ loop.index }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ customer.name or 'N/A' }}</td>
+                            <td>{{ customer.email or 'N/A' }}</td>
+                            <td>{{ customer.total_bookings or 0 }}</td>
+                            <td><strong>£{{ "%.2f"|format(customer.total_spent|float) if customer.total_spent else "0.00" }}</strong></td>
+                            <td>{{ customer.member_since[:10] if customer.member_since else 'N/A' }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">
+                                <i class="fas fa-users" style="font-size: 40px; margin-bottom: 10px; display: block; color: #cbd5e1;"></i>
+                                <p>No customer data available</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- BOOKING TRENDS -->
+    <div class="booking-trend-fix">
+        <h4>Booking Trend</h4>
+        <div class="booking-months-grid">
+            <div class="month-box">
+                <div class="month-name">Jan</div>
+                <div class="booking-count">10</div>
+                <div class="stat-label">bookings</div>
+            </div>
+            <!-- Add more months as needed -->
+        </div>
+    </div>
+        <div class="chart-container">
+            {% if booking_trends and max_bookings and max_bookings > 0 %}
+                <table class="charts-css column show-labels show-primary-axis" style="height: 200px;">
+                    <caption>Monthly Bookings Overview</caption>
+                    <tbody>
+                        {% for month in booking_trends %}
+                        <tr>
+                            <th scope="row">{{ month.month }}</th>
+                            {% set safe_bookings = month.bookings|default(0)|float %}
+                            {% set safe_max_bookings = max_bookings|default(1)|float %}
+                            {% if safe_max_bookings > 0 %}
+                                {% set size_value = safe_bookings / safe_max_bookings %}
+                            {% else %}
+                                {% set size_value = 0 %}
+                            {% endif %}
+                            <td style="--size: {{ size_value }};">
+                                <span class="tooltip">{{ month.bookings or 0 }} bookings</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div style="text-align: center; color: #64748b; padding: 30px;">
+                    <i class="fas fa-chart-bar" style="font-size: 40px; margin-bottom: 10px; display: block; color: #cbd5e1;"></i>
+                    <p>No booking trend data available</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Handle custom date range visibility
+document.getElementById('periodSelect').addEventListener('change', function() {
+    const customDates = document.getElementById('customDates');
+    if (this.value === 'custom') {
+        customDates.style.display = 'flex';
+    } else {
+        customDates.style.display = 'none';
+    }
+});
+
+// Apply filter function
+function applyFilter() {
+    const period = document.getElementById('periodSelect').value;
+    let url = '{{ url_for("admin_reports") }}?period=' + period;
+    
+    if (period === 'custom') {
+        const from = document.getElementById('dateFrom').value;
+        const to = document.getElementById('dateTo').value;
+        if (from && to) {
+            url += '&from=' + from + '&to=' + to;
+        } else {
+            alert('Please select both start and end dates for custom range.');
+            return;
+        }
+    }
+    
+    window.location.href = url;
+}
+
+// Set default dates for custom range if empty
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    
+    const dateFrom = document.getElementById('dateFrom');
+    const dateTo = document.getElementById('dateTo');
+    
+    if (!dateFrom.value) {
+        dateFrom.value = lastMonth.toISOString().split('T')[0];
+    }
+    if (!dateTo.value) {
+        dateTo.value = today.toISOString().split('T')[0];
+    }
+    
+    // Initialize based on current period
+    const periodSelect = document.getElementById('periodSelect');
+    const customDates = document.getElementById('customDates');
+    if (periodSelect.value === 'custom') {
+        customDates.style.display = 'flex';
+    }
+});
+</script>
+{% endblock %}

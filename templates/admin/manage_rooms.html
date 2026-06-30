@@ -1,0 +1,205 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+<title>Manage Rooms - Admin</title>
+<!-- Load only your rooms CSS and Font Awesome -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-room.css') }}?v=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="admin-container fade-in">
+    <div class="admin-header">
+        <h1><i class="fas fa-bed"></i> MANAGE ROOMS</h1>
+        <p><i class="fas fa-door-open"></i> Total: {{ rooms|length }} rooms across {{ hotels|length }} hotels</p>
+    </div>
+
+    <div class="admin-nav">
+        <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="{{ url_for('manage_hotels') }}"><i class="fas fa-hotel"></i> Hotels</a>
+        <a href="{{ url_for('manage_rooms') }}" class="active"><i class="fas fa-bed"></i> Rooms</a>
+        <a href="{{ url_for('manage_bookings') }}"><i class="fas fa-calendar-check"></i> Bookings</a>
+        <a href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Users</a>
+        <a href="{{ url_for('logout') }}" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="filter-section">
+        <select id="hotelFilter" class="form-control" style="width: 250px;">
+            <option value="">All Hotels</option>
+            {% for hotel in hotels %}
+            <option value="{{ hotel.hotel_id }}" {% if request.args.get('hotel_id')|int == hotel.hotel_id %}selected{% endif %}>
+                {{ hotel.title }} - {{ hotel.city }}
+            </option>
+            {% endfor %}
+        </select>
+        
+        <select id="statusFilter" class="form-control" style="width: 150px;">
+            <option value="">All Status</option>
+            <option value="available" {% if request.args.get('status') == 'available' %}selected{% endif %}>Available</option>
+            <option value="booked" {% if request.args.get('status') == 'booked' %}selected{% endif %}>Booked</option>
+            <option value="maintenance" {% if request.args.get('status') == 'maintenance' %}selected{% endif %}>Maintenance</option>
+        </select>
+        
+        <a href="{{ url_for('add_room') }}" class="admin-btn admin-btn-primary">
+            <i class="fas fa-plus-circle"></i> Add Room
+        </a>
+    </div>
+
+    <div class="data-table">
+        <div class="table-header">
+            <i class="fas fa-list"></i> Room Inventory
+        </div>
+        <div class="table-content">
+            {% if rooms %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Room #</th>
+                        <th>Hotel</th>
+                        <th>Type</th>
+                        <th>Max Guests</th>
+                        <th>Price Multiplier</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for room in rooms %}
+                    <tr>
+                        <td><strong>#{{ room.room_number }}</strong></td>
+                        <td>{{ room.hotel_name }}<br><small>{{ room.city }}</small></td>
+                        <td>
+                            {% if room.room_type == 'standard' %}
+                            <span class="room-type-badge badge-standard">
+                                <i class="fas fa-user"></i> Standard
+                            </span>
+                            {% elif room.room_type == 'double' %}
+                            <span class="room-type-badge badge-double">
+                                <i class="fas fa-user-friends"></i> Double
+                            </span>
+                            {% elif room.room_type == 'family' %}
+                            <span class="room-type-badge badge-family">
+                                <i class="fas fa-users"></i> Family
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ room.max_guests }}</td>
+                        <td>{{ (room.price_multiplier * 100)|int }}%</td>
+                        <td>
+                            {% if room.status == 'available' %}
+                            <span class="room-available">
+                                <i class="fas fa-check-circle"></i> Available
+                            </span>
+                            {% elif room.status == 'booked' %}
+                            <span class="room-booked">
+                                <i class="fas fa-times-circle"></i> Booked
+                            </span>
+                            {% else %}
+                            <span class="room-maintenance">
+                                <i class="fas fa-tools"></i> Maintenance
+                            </span>
+                            {% endif %}
+                        </td>
+                            
+                        <td>
+                            <div class="action-btns">
+                                <a href="{{ url_for('edit_room', room_id=room.room_id) }}" class="btn-icon btn-icon-edit" title="Edit Room">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                
+                                <!-- Status-based actions -->
+                                {% if room.status == 'available' %}
+                                    <!-- Show maintenance button for available rooms -->
+                                    <a href="{{ url_for('mark_unavailable', room_id=room.room_id) }}" 
+                                       class="btn-icon btn-icon-delete" 
+                                       title="Mark for Maintenance"
+                                       onclick="return confirm('Mark room #{{ room.room_number }} as unavailable for maintenance?')">
+                                        <i class="fas fa-tools"></i>
+                                    </a>
+                                    
+                                    <!-- Add delete button -->
+                                    <a href="{{ url_for('delete_room', room_id=room.room_id) }}" 
+                                       class="btn-icon btn-icon-danger" 
+                                       title="Delete Room"
+                                       onclick="return confirm('⚠️ WARNING! Are you sure you want to PERMANENTLY delete room #{{ room.room_number }}? This action cannot be undone!')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                    
+                                {% elif room.status == 'booked' %}
+                                    <!-- For booked rooms - can't do anything except view -->
+                                    <span class="btn-icon btn-icon-info" title="Cannot modify booked rooms">
+                                        <i class="fas fa-info-circle"></i>
+                                    </span>
+                                    
+                                {% else %}
+                                    <!-- For maintenance status - mark available -->
+                                    <a href="{{ url_for('mark_available', room_id=room.room_id) }}" 
+                                       class="btn-icon btn-icon-view" 
+                                       title="Mark Available"
+                                       onclick="return confirm('Mark room #{{ room.room_number }} as available?')">
+                                        <i class="fas fa-check"></i>
+                                    </a>
+                                    
+                                    <!-- Add delete button for maintenance rooms too -->
+                                    <a href="{{ url_for('delete_room', room_id=room.room_id) }}" 
+                                       class="btn-icon btn-icon-danger" 
+                                       title="Delete Room"
+                                       onclick="return confirm('⚠️ WARNING! Are you sure you want to PERMANENTLY delete room #{{ room.room_number }}? This action cannot be undone!')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-bed fa-3x"></i>
+                <h3>No Rooms Found</h3>
+                <p>Add rooms to your hotels</p>
+                <a href="{{ url_for('add_room') }}" class="admin-btn admin-btn-primary mt-20">
+                    <i class="fas fa-plus-circle"></i> Add Your First Room
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Filter rooms by hotel
+    document.getElementById('hotelFilter').addEventListener('change', function() {
+        const hotelId = this.value;
+        const statusFilter = document.getElementById('statusFilter').value;
+        let url = '{{ url_for("manage_rooms") }}';
+        const params = new URLSearchParams();
+        
+        if (hotelId) params.append('hotel_id', hotelId);
+        if (statusFilter) params.append('status', statusFilter);
+        
+        if (params.toString()) url += '?' + params.toString();
+        window.location.href = url;
+    });
+    
+    // Filter rooms by status
+    document.getElementById('statusFilter').addEventListener('change', function() {
+        const status = this.value;
+        const hotelFilter = document.getElementById('hotelFilter').value;
+        let url = '{{ url_for("manage_rooms") }}';
+        const params = new URLSearchParams();
+        
+        if (hotelFilter) params.append('hotel_id', hotelFilter);
+        if (status) params.append('status', status);
+        
+        if (params.toString()) url += '?' + params.toString();
+        window.location.href = url;
+    });
+    
+    // Clear filters button (optional - add this if you want a clear button)
+    function clearFilters() {
+        window.location.href = '{{ url_for("manage_rooms") }}';
+    }
+</script>
+{% endblock %}

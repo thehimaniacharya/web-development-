@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Register - WorldHotel{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="page-center">
+  <div class="register-card">
+
+    <h2>Registration</h2>
+
+    <form method="post">
+
+      <div class="form-row">
+        <div class="input-box">
+          <label>Full Name</label>
+          <input type="text" name="fullname" class="form-control" required>
+        </div>
+        <div class="input-box">
+          <label>Username</label>
+          <input type="text" name="username" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="input-box">
+          <label>Email</label>
+          <input type="email" name="email" class="form-control" required>
+        </div>
+        <div class="input-box">
+          <label>Phone Number</label>
+          <input type="text" name="phone" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="input-box">
+          <label>Password</label>
+          <input type="password" name="password" class="form-control" required>
+        </div>
+        <div class="input-box">
+          <label>Confirm Password</label>
+          <input type="password" name="confirm_password" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="gender-section">
+        <span>Gender</span>
+        <label><input type="radio" name="gender" value="Male" required> Male</label>
+        <label><input type="radio" name="gender" value="Female"> Female</label>
+        <label><input type="radio" name="gender" value="Other"> Prefer not to say</label>
+      </div>
+
+      <div class="terms">
+        <label>
+          <input type="checkbox" name="terms" required>
+          I agree to the <a href="#">Terms & Conditions</a>
+        </label>
+      </div>
+
+      <button class="btn btn-primary mt-3">Register</button>
+
+      <p class="login-link">
+        Already have an account?
+        <a href="{{ url_for('login') }}">Login</a>
+      </p>
+
+    </form>
+  </div>
+</div>
+
+{% endblock %}

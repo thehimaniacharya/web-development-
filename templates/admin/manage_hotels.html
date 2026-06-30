@@ -1,0 +1,163 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+<title>Manage Hotels - Admin</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-hotel.css') }}">
+{% endblock %}
+
+{% block body %}
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <h1><i class="fas fa-hotel"></i> MANAGE HOTELS</h1>
+        <p><i class="fas fa-building"></i> Total: {{ hotels|length }} hotels</p>
+    </div>
+
+    <!-- Admin Navigation -->
+    <div class="admin-nav">
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a href="{{ url_for('manage_hotels') }}" class="nav-link active">
+            <i class="fas fa-hotel"></i> Hotels
+        </a>
+        <a href="{{ url_for('manage_rooms') }}" class="nav-link">
+            <i class="fas fa-bed"></i> Rooms
+        </a>
+        <a href="{{ url_for('manage_bookings') }}" class="nav-link">
+            <i class="fas fa-calendar-check"></i> Bookings
+        </a>
+        <a href="{{ url_for('manage_users') }}" class="nav-link">
+            <i class="fas fa-users"></i> Users
+        </a>
+        <a href="{{ url_for('admin_reports') }}" class="nav-link">
+            <i class="fas fa-chart-bar"></i> Reports
+        </a>
+        <a href="{{ url_for('logout') }}" class="nav-link logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{{ url_for('add_hotel') }}" class="admin-btn admin-btn-primary">
+            <i class="fas fa-plus-circle"></i> Add New Hotel
+        </a>
+        <a href="{{ url_for('admin_dashboard') }}" class="admin-btn admin-btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Search Box -->
+    <div class="search-box">
+        <input type="text" placeholder="Search hotels..." id="searchInput">
+        <select id="cityFilter">
+            <option value="">All Cities</option>
+            {% for city in ['London', 'Manchester', 'Birmingham', 'Edinburgh', 'Glasgow', 
+                            'Bristol', 'Cardiff', 'Oxford', 'Kent', 'Aberdeen', 
+                            'Belfast', 'Newcastle'] %}
+            <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+        </select>
+        <button onclick="filterHotels()">
+            <i class="fas fa-search"></i> Search
+        </button>
+    </div>
+
+    <!-- Hotels Table -->
+    <div class="data-table">
+        <div class="table-header">
+            <i class="fas fa-list"></i> Hotel List ({{ hotels|length }})
+        </div>
+        <div class="table-content">
+            {% if hotels %}
+            <table>
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-hotel"></i> Hotel Name</th>
+                        <th><i class="fas fa-city"></i> City</th>
+                        <th><i class="fas fa-pound-sign"></i> Standard Price</th>
+                        <th><i class="fas fa-bed"></i> Rooms</th>
+                        <th><i class="fas fa-cog"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hotel in hotels %}
+                    <tr>
+                        <td>#{{ hotel.hotel_id }}</td>
+                        <td><strong>{{ hotel.title }}</strong></td>
+                        <td>{{ hotel.city }}</td>
+                        <td>
+                            {% if hotel.standard_price_peak %}
+                                Peak: £{{ hotel.standard_price_peak }}<br>
+                                Off-Peak: £{{ hotel.standard_price_off }}
+                            {% else %}
+                                £{{ hotel.price }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if hotel.total_rooms %}
+                                <span class="room-count">{{ hotel.total_rooms }}</span> rooms
+                                {% if hotel.available_rooms %}
+                                <br><small>({{ hotel.available_rooms }} available)</small>
+                                {% endif %}
+                            {% else %}
+                                <span class="status-badge badge-warning">No rooms</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <a href="{{ url_for('edit_hotel', hotel_id=hotel.hotel_id) }}" 
+                                   class="btn-icon btn-icon-edit" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('delete_hotel', hotel_id=hotel.hotel_id) }}" 
+                                   class="btn-icon btn-icon-delete" 
+                                   title="Delete"
+                                   onclick="return confirm('Are you sure you want to delete {{ hotel.title }}? This action cannot be undone.')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                <a href="{{ url_for('manage_rooms') }}?hotel_id={{ hotel.hotel_id }}" 
+                                   class="btn-icon" 
+                                   title="View Rooms"
+                                   style="background: #4caf50; color: white;">
+                                    <i class="fas fa-bed"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-hotel fa-3x"></i>
+                <h3>No Hotels Found</h3>
+                <p>Add your first hotel to get started</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function filterHotels() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cityFilter = document.getElementById('cityFilter').value.toLowerCase();
+            const rows = document.querySelectorAll('.table-content tbody tr');
+            
+            rows.forEach(row => {
+                const hotelName = row.cells[1].textContent.toLowerCase();
+                const city = row.cells[2].textContent.toLowerCase();
+                
+                const matchesSearch = hotelName.includes(searchTerm);
+                const matchesCity = !cityFilter || city.includes(cityFilter);
+                
+                row.style.display = (matchesSearch && matchesCity) ? '' : 'none';
+            });
+        }
+        
+        // Initialize event listeners
+        document.getElementById('searchInput').addEventListener('keyup', filterHotels);
+        document.getElementById('cityFilter').addEventListener('change', filterHotels);
+    </script>
+{% endblock %}

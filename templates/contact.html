@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - WorldHotel{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="hero-overlay">
+        <h1 class="hero-title">Contact Us</h1>
+        <p class="hero-subtitle">We're here to help and answer any question you might have</p>
+    </div>
+</section>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container mt-4">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'info' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<!-- CONTACT SECTION -->
+<section class="contact-section">
+    <div class="container">
+        <div class="row">
+            <!-- Contact Info -->
+            <div class="col-lg-5 col-md-6 mb-4">
+                <div class="contact-info">
+                    <h2 class="section-title">Get in Touch</h2>
+                    <p class="contact-description">Have questions about your booking, our hotels, or anything else? We'd love to hear from you.</p>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h5>Address</h5>
+                            <p>08 Batauli<br>Rupandehi, Nepal</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h5>Phone</h5>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h5>Email</h5>
+                            <p>info@worldhotels.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-7 col-md-6">
+                <div class="contact-form-wrapper">
+                    <form method="POST" action="{{ url_for('contact') }}">
+                        <div class="contact-form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" class="form-input" placeholder="Enter your name" required>
+                        </div>
+
+                        <div class="contact-form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+                        </div>
+
+                        <div class="contact-form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" class="form-input" placeholder="Enter subject" required>
+                        </div>
+
+                        <div class="contact-form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" class="form-textarea" rows="5" placeholder="Enter your message" required></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">SEND MESSAGE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ SECTION -->
+<section class="faq-section">
+    <div class="container">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-container">
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I make a reservation?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>You can make a reservation by clicking the "RESERVE NOW" button in the navigation menu, or by contacting us directly via phone or email. Our booking system is available 24/7 for your convenience.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What is your cancellation policy?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Our cancellation policy allows free cancellation up to 48 hours before your check-in date. Cancellations made within 48 hours of check-in may incur a fee equal to one night's stay. Please refer to your booking confirmation for specific terms.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Do you offer airport transportation?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes, we offer complimentary airport shuttle service for all our guests. Please inform us of your flight details at least 24 hours in advance to arrange pickup.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What amenities are included?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>All our rooms include complimentary Wi-Fi, breakfast, 24-hour room service, fitness center access, and concierge services. Premium rooms also include spa access and minibar.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function toggleFAQ(button) {
+    const faqItem = button.parentElement;
+    const answer = faqItem.querySelector('.faq-answer');
+    const icon = button.querySelector('i');
+    
+    document.querySelectorAll('.faq-item').forEach(item => {
+        if (item !== faqItem) {
+            item.classList.remove('active');
+            item.querySelector('.faq-answer').style.maxHeight = null;
+            item.querySelector('i').style.transform = 'rotate(0deg)';
+        }
+    });
+    
+    // Toggle current FAQ
+    faqItem.classList.toggle('active');
+    if (faqItem.classList.contains('active')) {
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        icon.style.transform = 'rotate(180deg)';
+    } else {
+        answer.style.maxHeight = null;
+        icon.style.transform = 'rotate(0deg)';
+    }
+}
+</script>
+
+{% endblock %}

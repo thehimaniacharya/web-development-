@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Hotels{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/hotel.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<!-- HERO SECTION -->
+<section class="hotel-hero">
+  <div class="hero-content">
+    <h1>Discover Your Perfect Stay</h1>
+    <p>
+      Discover an exclusive selection of distinguished hotels throughout the United Kingdom.
+    </p>
+  </div>
+</section>
+
+<!-- FEATURED COLLECTION -->
+<section class="featured-section">
+  <div class="featured-text">
+    <span class="featured-label">FEATURED COLLECTION</span>
+    <h2>Luxury Stays in the UK</h2>
+    <p>
+      Experience distinguished hotels where heritage, elegance,
+      and exceptional service define every stay.
+    </p>
+    <a href="#" class="discover-link">DISCOVER MORE</a>
+  </div>
+
+  <div class="featured-image">
+    <img src="{{ url_for('static', filename='images/hero.jpg') }}" alt="Luxury Hotel">
+  </div>
+</section>
+
+<!-- FILTER SECTION -->
+<section class="filter-section">
+  <div class="container">
+    <form method="GET" action="{{ url_for('hotels') }}" id="filter-form">
+      <div class="filter-container">
+        <!-- City Filter -->
+        <div class="filter-item">
+          <select name="city" id="city-filter" class="filter-select" onchange="document.getElementById('filter-form').submit()">
+            <option value="">All Cities</option>
+            {% for city in cities %}
+            <option value="{{ city }}" {% if selected_city == city %}selected{% endif %}>
+              {{ city }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Sort Filter -->
+        <div class="filter-item">
+          <select name="sort" id="sort-filter" class="filter-select" onchange="document.getElementById('filter-form').submit()">
+            <option value="recommended" {% if selected_sort == 'recommended' %}selected{% endif %}>Sort By: Recommended</option>
+            <option value="price-low" {% if selected_sort == 'price-low' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price-high" {% if selected_sort == 'price-high' %}selected{% endif %}>Price: High to Low</option>
+            <option value="name" {% if selected_sort == 'name' %}selected{% endif %}>Name: A to Z</option>
+          </select>
+        </div>
+
+        <!-- Hotel Count -->
+        <div class="hotel-count">
+          <span id="hotel-count-number">{{ total_hotels }}</span> Hotels found
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- HOTEL LIST -->
+<section class="py-5 hotel-page">
+  <div class="container">
+    <h2 class="mb-4">Available Hotels</h2>
+
+    <div class="row g-4" id="hotel-list">
+      {% for hotel in hotels %}
+      <div class="col-md-4 hotel-card mb-4">
+        <div class="card h-100 position-relative">
+          <!-- HOTEL IMAGE -->
+          <img src="{{ url_for('static', filename='images/hotels/' + hotel.image) }}"
+               class="card-img-top hotel-img" alt="{{ hotel.title }}">
+          <div class="card-body hotel-card-body">
+            <small class="text-muted text-uppercase">{{ hotel.city }}</small>
+            <h5 class="card-title mt-2">{{ hotel.title }}</h5>
+            <p class="card-text">{{ hotel.description[:90] }}...</p>
+            <div class="card-footer-custom d-flex justify-content-between align-items-center">
+              <div class="price">
+                <span>Rates from</span>
+                <strong>${{ hotel.price }}</strong>
+              </div>
+              <a href="{{ url_for('hotel_detail', hotel_id=hotel.hotel_id) }}" class="explore-btn">
+                Explore
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if more %}
+    <div class="text-center mt-4">
+      <button id="load-more" class="btn btn-secondary" 
+              data-offset="{{ next_offset }}"
+              data-city="{{ selected_city }}"
+              data-sort="{{ selected_sort }}">
+        Load More
+      </button>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- LOAD MORE SCRIPT -->
+<script>
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.id === 'load-more') {
+    const btn = e.target;
+    const nextOffset = parseInt(btn.getAttribute('data-offset'));
+    const city = btn.getAttribute('data-city') || '';
+    const sort = btn.getAttribute('data-sort') || 'recommended';
+    
+    let queryParams = `offset=${nextOffset}`;
+    if (city) queryParams += `&city=${city}`;
+    if (sort) queryParams += `&sort=${sort}`;
+    
+    fetch(`/hotels?${queryParams}`)
+    .then(response => response.text())
+    .then(html => {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      
+      const oldBtn = document.getElementById('load-more');
+      if (oldBtn) {
+        oldBtn.closest('.text-center').remove();
+      }
+      
+      const hotelList = document.getElementById('hotel-list');
+      tempDiv.querySelectorAll('.hotel-card').forEach(card => {
+        hotelList.appendChild(card);
+      });
+      
+      const newBtn = tempDiv.querySelector('#load-more');
+      if (newBtn) {
+        const newBtnContainer = newBtn.closest('.text-center');
+        hotelList.parentElement.appendChild(newBtnContainer);
+      }
+    })
+    .catch(error => console.error('Error loading more hotels:', error));
+  }
+});
+</script>
+
+{% endblock %}

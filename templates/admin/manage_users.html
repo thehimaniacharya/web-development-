@@ -1,0 +1,441 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+<title>Manage Users - Admin</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-users.css') }}?v=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="admin-container fade-in">
+    <!-- HEADER -->
+    <div class="admin-header">
+        <h1><i class="fas fa-users"></i> MANAGE USERS</h1>
+        <p><i class="fas fa-user-friends"></i> Total: {{ users|length }} registered users</p>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="admin-nav">
+        <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="{{ url_for('manage_hotels') }}"><i class="fas fa-hotel"></i> Hotels</a>
+        <a href="{{ url_for('manage_rooms') }}"><i class="fas fa-bed"></i> Rooms</a>
+        <a href="{{ url_for('manage_bookings') }}"><i class="fas fa-calendar-check"></i> Bookings</a>
+        <a href="{{ url_for('manage_users') }}" class="active"><i class="fas fa-users"></i> Users</a>
+        <a href="{{ url_for('admin_reports') }}"><i class="fas fa-chart-bar"></i> Reports</a>
+        <a href="{{ url_for('logout') }}" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <!-- ADD USER CARD (Like Add Hotel) -->
+    <div class="action-card">
+        <div class="action-card-header">
+            <h3><i class="fas fa-user-plus"></i> Add New User</h3>
+            <button class="action-card-toggle" id="toggleUserFormBtn">
+                <i class="fas fa-plus"></i> Add New User
+            </button>
+        </div>
+        
+        <div class="action-card-body" id="userFormContainer" style="display: none;">
+            <form id="createUserForm" action="{{ url_for('add_user_admin') }}" method="POST">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="username"><i class="fas fa-user"></i> Username *</label>
+                        <input type="text" id="username" name="username" class="form-control" 
+                               placeholder="Enter username" required>
+                        <small class="form-hint">3-20 characters, letters and numbers only</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email Address *</label>
+                        <input type="email" id="email" name="email" class="form-control" 
+                               placeholder="user@example.com" required>
+                        <small class="form-hint">Valid email address required</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Password *</label>
+                        <input type="password" id="password" name="password" class="form-control" 
+                               placeholder="Enter password" required>
+                        <small class="form-hint">Minimum 6 characters</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword"><i class="fas fa-lock"></i> Confirm Password *</label>
+                        <input type="password" id="confirmPassword" name="confirm_password" class="form-control" 
+                               placeholder="Confirm password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fullName"><i class="fas fa-id-card"></i> Full Name</label>
+                        <input type="text" id="fullName" name="full_name" class="form-control" 
+                               placeholder="John Doe">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="role"><i class="fas fa-user-tag"></i> User Role *</label>
+                        <select id="role" name="role" class="form-control" required>
+                            <option value="">Select Role</option>
+                            <option value="user">Standard User</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                        <small class="form-hint">Admins have full system access</small>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" id="cancelUserFormBtn">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn-create">
+                        <i class="fas fa-user-plus"></i> Create User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- USER STATS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4><i class="fas fa-user-tie"></i> Total Users</h4>
+            <div class="stat-number">{{ users|length }}</div>
+        </div>
+        <div class="stat-card">
+            <h4><i class="fas fa-user-shield"></i> Administrators</h4>
+            <div class="stat-number">{{ admin_count or 0 }}</div>
+        </div>
+        <div class="stat-card">
+            <h4><i class="fas fa-user-check"></i> Active Today</h4>
+            <div class="stat-number">{{ active_today or 0 }}</div>
+        </div>
+        <div class="stat-card">
+            <h4><i class="fas fa-calendar-check"></i> Total Bookings</h4>
+            <div class="stat-number">{{ total_user_bookings or 0 }}</div>
+        </div>
+    </div>
+
+    <!-- USERS TABLE -->
+    <div class="data-table">
+        <div class="table-header">
+            <i class="fas fa-list"></i> User Accounts
+        </div>
+        <div class="table-content">
+            {% if users %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name & Email</th>
+                        <th>Role</th>
+                        <th>Bookings</th>
+                        <th>Joined Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td><strong>#{{ user.id }}</strong></td>
+                        <td>
+                            <strong>{{ user.username or user.name or 'N/A' }}</strong><br>
+                            <small>{{ user.email or 'N/A' }}</small>
+                        </td>
+                        <td>
+                            {% if user.role == 'admin' %}
+                            <span class="user-role role-admin">
+                                <i class="fas fa-user-shield"></i> Administrator
+                            </span>
+                            {% else %}
+                            <span class="user-role role-user">
+                                <i class="fas fa-user"></i> Standard User
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span style="font-weight: 700; color: #1e293b; font-size: 18px;">
+                                {{ user.total_bookings or 0 }}
+                            </span><br>
+                            <small style="color: #64748b;">booking(s)</small>
+                        </td>
+                        <td>
+                            {% if user.created_at %}
+                                {% if user.created_at is string %}
+                                    {{ user.created_at[:10] }}
+                                {% else %}
+                                    {{ user.created_at.strftime('%Y-%m-%d') }}
+                                {% endif %}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.status == 1 %}
+                            <span class="account-status status-active">
+                                <i class="fas fa-check-circle"></i> Active
+                            </span>
+                            {% else %}
+                            <span class="account-status status-inactive">
+                                <i class="fas fa-times-circle"></i> Inactive
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <!-- Reset Password Button -->
+                                <button class="btn-icon btn-icon-edit reset-password-btn" 
+                                        title="Reset Password"
+                                        data-user-id="{{ user.id }}"
+                                        data-user-name="{{ user.username or user.name or 'User' }}">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                                
+                                <!-- Edit Role Button -->
+                                <button class="btn-icon btn-icon-view edit-role-btn" 
+                                        title="Edit Role"
+                                        data-user-id="{{ user.id }}"
+                                        data-user-name="{{ user.username or user.name }}"
+                                        data-current-role="{{ user.role }}">
+                                    <i class="fas fa-user-tag"></i>
+                                </button>
+                                
+                                <!-- Delete User Button (not for current admin) -->
+                                {% if user.id != session.get('id') %}
+                                <a href="{{ url_for('delete_user_admin', user_id=user.id) }}" 
+                                   class="btn-icon btn-icon-delete"
+                                   onclick="return confirm('Delete user {{ user.username or user.name }}? This cannot be undone.')"
+                                   title="Delete User">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-users fa-3x"></i>
+                <h3>No Users Found</h3>
+                <p>Users will appear here when they register</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Password Reset Modal -->
+<div id="passwordModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-key"></i> Reset Password</h3>
+        </div>
+        <div class="modal-body">
+            <p>Reset password for: <strong id="modalUserName"></strong></p>
+            <div style="margin: 20px 0;">
+                <input type="password" id="newPassword" placeholder="Enter new password" 
+                       style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+                <small style="color: #64748b; display: block; margin-top: 5px;">Password must be at least 6 characters</small>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button id="cancelReset" class="admin-btn admin-btn-secondary">Cancel</button>
+                <button id="confirmReset" class="admin-btn admin-btn-primary">Reset Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Role Modal -->
+<div id="editRoleModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-tag"></i> Edit User Role</h3>
+        </div>
+        <div class="modal-body">
+            <p>Change role for: <strong id="editRoleUserName"></strong></p>
+            <div style="margin: 20px 0;">
+                <label for="newRole">Select New Role:</label>
+                <select id="newRole" class="form-control" style="margin-top: 10px;">
+                    <option value="user">Standard User</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button id="cancelEditRole" class="admin-btn admin-btn-secondary">Cancel</button>
+                <button id="confirmEditRole" class="admin-btn admin-btn-primary">Update Role</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle User Form (Like Add Hotel)
+    const toggleBtn = document.getElementById('toggleUserFormBtn');
+    const userFormContainer = document.getElementById('userFormContainer');
+    const cancelBtn = document.getElementById('cancelUserFormBtn');
+    
+    toggleBtn.addEventListener('click', function() {
+        const isVisible = userFormContainer.style.display === 'block';
+        userFormContainer.style.display = isVisible ? 'none' : 'block';
+        toggleBtn.innerHTML = isVisible ? 
+            '<i class="fas fa-plus"></i> Add New User' : 
+            '<i class="fas fa-minus"></i> Hide Form';
+    });
+    
+    cancelBtn.addEventListener('click', function() {
+        userFormContainer.style.display = 'none';
+        toggleBtn.innerHTML = '<i class="fas fa-plus"></i> Add New User';
+    });
+    
+    // Password confirmation validation
+    const form = document.getElementById('createUserForm');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    
+    form.addEventListener('submit', function(e) {
+        if (password.value !== confirmPassword.value) {
+            e.preventDefault();
+            alert('Passwords do not match!');
+            confirmPassword.focus();
+        }
+        
+        if (password.value.length < 6) {
+            e.preventDefault();
+            alert('Password must be at least 6 characters!');
+            password.focus();
+        }
+    });
+    
+    // Password Reset Modal
+    let currentUserId = null;
+    let currentUserName = null;
+    const modal = document.getElementById('passwordModal');
+    const modalUserName = document.getElementById('modalUserName');
+    const newPasswordInput = document.getElementById('newPassword');
+    const cancelResetBtn = document.getElementById('cancelReset');
+    const confirmResetBtn = document.getElementById('confirmReset');
+    
+    document.querySelectorAll('.reset-password-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            currentUserId = this.getAttribute('data-user-id');
+            currentUserName = this.getAttribute('data-user-name');
+            
+            modalUserName.textContent = currentUserName;
+            newPasswordInput.value = '';
+            modal.style.display = 'flex';
+            newPasswordInput.focus();
+        });
+    });
+    
+    cancelResetBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    confirmResetBtn.addEventListener('click', function() {
+        const newPassword = newPasswordInput.value.trim();
+        
+        if (!newPassword) {
+            alert('Please enter a new password');
+            return;
+        }
+        
+        if (newPassword.length < 6) {
+            alert('Password must be at least 6 characters');
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('password', newPassword);
+        formData.append('user_id', currentUserId);
+        
+        fetch('{{ url_for("reset_user_password") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Password reset successfully for ' + currentUserName);
+                modal.style.display = 'none';
+            } else {
+                alert('Error: ' + (data.message || 'Something went wrong'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to reset password. Please try again.');
+        });
+    });
+    
+    // Edit Role Modal
+    const editRoleModal = document.getElementById('editRoleModal');
+    const editRoleUserName = document.getElementById('editRoleUserName');
+    const newRoleSelect = document.getElementById('newRole');
+    const cancelEditRoleBtn = document.getElementById('cancelEditRole');
+    const confirmEditRoleBtn = document.getElementById('confirmEditRole');
+    
+    document.querySelectorAll('.edit-role-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            currentUserId = this.getAttribute('data-user-id');
+            currentUserName = this.getAttribute('data-user-name');
+            const currentRole = this.getAttribute('data-current-role');
+            
+            editRoleUserName.textContent = currentUserName;
+            newRoleSelect.value = currentRole;
+            editRoleModal.style.display = 'flex';
+        });
+    });
+    
+    cancelEditRoleBtn.addEventListener('click', function() {
+        editRoleModal.style.display = 'none';
+    });
+    
+    confirmEditRoleBtn.addEventListener('click', function() {
+        const newRole = newRoleSelect.value;
+        
+        fetch('{{ url_for("update_user_role") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                role: newRole
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Role updated successfully for ' + currentUserName);
+                editRoleModal.style.display = 'none';
+                location.reload(); // Reload to show updated role
+            } else {
+                alert('Error: ' + (data.message || 'Something went wrong'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to update role. Please try again.');
+        });
+    });
+    
+    // Close modals when clicking outside
+    [modal, editRoleModal].forEach(modalElement => {
+        modalElement.addEventListener('click', function(event) {
+            if (event.target === modalElement) {
+                modalElement.style.display = 'none';
+            }
+        });
+    });
+    
+    // Close modals with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            modal.style.display = 'none';
+            editRoleModal.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

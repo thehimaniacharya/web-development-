@@ -1,0 +1,208 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+<title>Manage Bookings - Admin</title>
+<!-- LOAD THE SEPARATE CSS FILE -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-bookings.css') }}?v=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="admin-container fade-in">
+    <!-- HEADER -->
+    <div class="admin-header">
+        <h1><i class="fas fa-calendar-check"></i> MANAGE BOOKINGS</h1>
+        <p><i class="fas fa-receipt"></i> Total: {{ bookings|length }} bookings</p>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="admin-nav">
+        <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="{{ url_for('manage_hotels') }}"><i class="fas fa-hotel"></i> Hotels</a>
+        <a href="{{ url_for('manage_rooms') }}"><i class="fas fa-bed"></i> Rooms</a>
+        <a href="{{ url_for('manage_bookings') }}" class="active"><i class="fas fa-calendar-check"></i> Bookings</a>
+        <a href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Users</a>
+        <a href="{{ url_for('logout') }}" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <!-- STATS SUMMARY -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4><i class="fas fa-check-circle"></i> Confirmed</h4>
+            <div class="stat-number">{{ confirmed_count or 0 }}</div>
+        </div>
+        <div class="stat-card">
+            <h4><i class="fas fa-clock"></i> Pending</h4>
+            <div class="stat-number">{{ pending_count or 0 }}</div>
+        </div>
+        <div class="stat-card">
+            <h4><i class="fas fa-times-circle"></i> Cancelled</h4>
+            <div class="stat-number">{{ cancelled_count or 0 }}</div>
+        </div>
+        <div class="stat-card">
+            <h4><i class="fas fa-pound-sign"></i> Total Revenue</h4>
+            <div class="stat-number">£{{ "%.2f"|format(total_revenue|float) if total_revenue else "0.00" }}</div>
+        </div>
+    </div>
+
+    <!-- STATUS FILTER -->
+    <div class="filter-section">
+        <a href="{{ url_for('manage_bookings') }}" 
+           class="admin-btn {% if not current_filter %}admin-btn-primary{% else %}admin-btn-secondary{% endif %}">
+            All ({{ bookings|length }})
+        </a>
+        <a href="{{ url_for('manage_bookings') }}?status=confirmed" 
+           class="admin-btn {% if current_filter == 'confirmed' %}admin-btn-primary{% else %}admin-btn-secondary{% endif %}">
+            Confirmed ({{ confirmed_count or 0 }})
+        </a>
+        <a href="{{ url_for('manage_bookings') }}?status=pending" 
+           class="admin-btn {% if current_filter == 'pending' %}admin-btn-primary{% else %}admin-btn-secondary{% endif %}">
+            Pending ({{ pending_count or 0 }})
+        </a>
+        <a href="{{ url_for('manage_bookings') }}?status=cancelled" 
+           class="admin-btn {% if current_filter == 'cancelled' %}admin-btn-primary{% else %}admin-btn-secondary{% endif %}">
+            Cancelled ({{ cancelled_count or 0 }})
+        </a>
+    </div>
+
+    <!-- BOOKINGS TABLE -->
+    <div class="data-table">
+        <div class="table-header">
+            <i class="fas fa-list"></i> All Bookings
+        </div>
+        <div class="table-content">
+            {% if bookings %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer</th>
+                        <th>Hotel & Room</th>
+                        <th>Dates</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td><strong>#{{ booking.booking_id }}</strong></td>
+                        <td>
+                            {{ booking.customer_name or 'N/A' }}<br>
+                            <small>{{ booking.email or 'N/A' }}</small>
+                        </td>
+                        <td>
+                            {{ booking.hotel_name or 'N/A' }}<br>
+                            <small>Room Type: {{ (booking.room_type or 'standard')|title }}</small>
+                        </td>
+                        <td class="date-cell">
+                            <i class="far fa-calendar-alt"></i> {{ booking.check_in_formatted or booking.check_in or 'N/A' }}<br>
+                            <i class="far fa-calendar-alt"></i> {{ booking.check_out_formatted or booking.check_out or 'N/A' }}<br>
+                            <small>{{ booking.num_nights or booking.nights or 1 }} night(s)</small>
+                        </td>
+                        <td class="booking-amount">£{{ "%.2f"|format(booking.total_price|float) if booking.total_price else "0.00" }}</td>
+                        <td>
+                            {% if booking.status == 'confirmed' %}
+                            <span class="booking-status status-confirmed">
+                                <i class="fas fa-check"></i> Confirmed
+                            </span>
+                            {% elif booking.status == 'pending' %}
+                            <span class="booking-status status-pending">
+                                <i class="fas fa-clock"></i> Pending
+                            </span>
+                            {% elif booking.status == 'cancelled' %}
+                            <span class="booking-status status-cancelled">
+                                <i class="fas fa-times"></i> Cancelled
+                            </span>
+                            {% else %}
+                            <span class="booking-status">
+                                {{ (booking.status or 'unknown')|title }}
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <!-- View booking details -->
+                                <a href="{{ url_for('receipt', booking_id=booking.booking_id) }}" 
+                                   target="_blank"
+                                   class="btn-icon btn-icon-view" title="View Receipt">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                
+                                <!-- Confirm button for pending bookings -->
+                                {% if booking.status == 'pending' %}
+                                <a href="{{ url_for('confirm_booking_admin', booking_id=booking.booking_id) }}" 
+                                   class="btn-icon btn-icon-edit" 
+                                   title="Confirm Booking"
+                                   onclick="return confirm('Confirm booking #{{ booking.booking_id }}?')">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                {% endif %}
+                                
+                                <!-- Cancel button for non-cancelled bookings -->
+                                {% if booking.status != 'cancelled' %}
+                                <a href="{{ url_for('cancel_booking_admin', booking_id=booking.booking_id) }}" 
+                                   class="btn-icon btn-icon-delete" 
+                                   onclick="return confirm('Cancel booking #{{ booking.booking_id }}? This action cannot be undone.')"
+                                   title="Cancel Booking">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-calendar-times fa-3x"></i>
+                <h3>No Bookings Found</h3>
+                <p>Bookings will appear here once customers make reservations</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add confirmation for actions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Format all currency amounts
+        document.querySelectorAll('.booking-amount').forEach(el => {
+            const text = el.textContent;
+            const match = text.match(/£(\d+(\.\d+)?)/);
+            if (match) {
+                const amount = parseFloat(match[1]);
+                if (!isNaN(amount)) {
+                    el.textContent = '£' + amount.toFixed(2);
+                }
+            }
+        });
+        
+        // Add active class to filter buttons based on URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+        const filterButtons = document.querySelectorAll('.filter-section .admin-btn');
+        
+        filterButtons.forEach(btn => {
+            const href = btn.getAttribute('href');
+            if (status) {
+                if (href.includes('status=' + status)) {
+                    btn.classList.remove('admin-btn-secondary');
+                    btn.classList.add('admin-btn-primary');
+                } else {
+                    btn.classList.remove('admin-btn-primary');
+                    btn.classList.add('admin-btn-secondary');
+                }
+            } else {
+                if (href === '{{ url_for("manage_bookings") }}') {
+                    btn.classList.remove('admin-btn-secondary');
+                    btn.classList.add('admin-btn-primary');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

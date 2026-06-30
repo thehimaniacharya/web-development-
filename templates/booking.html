@@ -1,0 +1,904 @@
+{% extends "base.html" %}
+
+{% block title %}{{ hotel.title }} - Book Room{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/booking.css') }}">
+<style>
+.price-calculation-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #eaeaea;
+}
+
+.price-calculation-section h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+}
+
+.price-details {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.price-row:last-child {
+    border-bottom: none;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #2c3e50;
+}
+
+.price-label {
+    color: #555;
+}
+
+.price-value {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.total-price {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.calculation-note {
+    font-size: 0.9em;
+    color: #666;
+    font-style: italic;
+    margin-top: 15px;
+    padding: 10px;
+    background: #fff3cd;
+    border-radius: 5px;
+}
+
+#btn-proceed-booking {
+    background: linear-gradient(135deg, #27ae60, #219653);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+#btn-proceed-booking:hover:not(:disabled) {
+    background: linear-gradient(135deg, #219653, #1e8747);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+}
+
+#btn-proceed-booking:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+.room-price-info {
+    display: none; 
+}
+
+.season-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.peak-season {
+    background: #ff6b6b;
+    color: white;
+}
+
+.offpeak-season {
+    background: #4ecdc4;
+    color: white;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+
+<!-- HERO SECTION -->
+<section class="hotel-hero" style="background-image: url('{{ hotel.hero_image }}');">
+  <div class="hero-overlay">
+    <div class="hero-content">
+      <h1>{{ hotel.title }}</h1>
+      <p class="hero-subtitle">EXPERIENCE LUXURY IN THE HEART OF {{ hotel.city|upper }} WITH STUNNING VIEWS.</p>
+      
+      <!-- Amenities Icons -->
+      <div class="hero-amenities">
+        <div class="amenity">
+          <i class="fas fa-swimming-pool"></i>
+          <span>Swimming Pool</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-dumbbell"></i>
+          <span>Fitness Center</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-utensils"></i>
+          <span>Restaurant</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-spa"></i>
+          <span>Spa</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-parking"></i>
+          <span>Parking</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-cocktail"></i>
+          <span>Bar</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-concierge-bell"></i>
+          <span>Room Service</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN CONTENT LAYOUT -->
+<div class="container main-booking-container">
+  <div class="booking-layout">
+    <!-- LEFT COLUMN - ROOMS -->
+    <div class="rooms-column">
+      <h2 class="section-title">Available Room Types</h2>
+      
+      <div id="rooms-container" class="rooms-list">
+        <!-- SINGLE ROOM -->
+        <div class="room-card" data-room-type="single" data-base-price="100" data-max-guests="1">
+          <!-- ROOM IMAGE -->
+          <div class="room-image-top">
+            <img src="{{ url_for('static', filename='images/rooms/single.jpg') }}" 
+                 alt="Single Room" class="room-img-main"
+                 onerror="this.src='https://images.unsplash.com/photo-1584132967334-10e028bd69f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+          </div>
+          
+          <div class="room-details">
+            <div class="room-header">
+              <h3 class="room-title">Single Room (Standard)</h3>
+            </div>
+            
+            <p class="room-description">Comfortable room for single occupancy</p>
+            
+            <div class="room-specs">
+              <div class="spec-item">
+                <i class="fas fa-user"></i>
+                <span>Up to 1 guest</span>
+              </div>
+              <div class="spec-item">
+                <i class="fas fa-bed"></i>
+                <span>1 Single Bed</span>
+              </div>
+            </div>
+            
+            <div class="amenities-section">
+              <div class="amenities-list">
+                <span class="amenity-item"><i class="fas fa-wifi"></i> WiFi</span>
+                <span class="amenity-item"><i class="fas fa-phone"></i> Phone</span>
+                <span class="amenity-item"><i class="fas fa-tv"></i> TV</span>
+                <span class="amenity-item"><i class="fas fa-wind"></i> Air Conditioning</span>
+                <span class="amenity-item"><i class="fas fa-hair-dryer"></i> Hair Dryer</span>
+              </div>
+            </div>
+            
+            <div class="price-section room-price-info">
+              <div class="price-label">Base Price</div>
+              <div class="price-main">£<span id="base-price-single">100</span></div>
+              <div class="price-sub">per night (Standard)</div>
+            </div>
+            
+            <div class="room-footer">
+              <div class="availability-status">
+                <div class="available-indicator">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Available</span>
+                </div>
+              </div>
+              
+              <div class="booking-action">
+                <button type="button" class="btn-select-room" data-room-type="single">
+                  SELECT THIS ROOM
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DOUBLE ROOM -->
+        <div class="room-card" data-room-type="double" data-base-price="120" data-max-guests="2">
+          <!-- ROOM IMAGE -->
+          <div class="room-image-top">
+            <img src="{{ url_for('static', filename='images/rooms/double.jpg') }}" 
+                 alt="Double Room" class="room-img-main"
+                 onerror="this.src='https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+          </div>
+          
+          <div class="room-details">
+            <div class="room-header">
+              <h3 class="room-title">Double Room</h3>
+            </div>
+            
+            <p class="room-description">Spacious room for two guests</p>
+            
+            <div class="room-specs">
+              <div class="spec-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Up to 2 guests</span>
+              </div>
+              <div class="spec-item">
+                <i class="fas fa-bed"></i>
+                <span>1 Double Bed or 2 Single Beds</span>
+              </div>
+            </div>
+            
+            <div class="amenities-section">
+              <div class="amenities-list">
+                <span class="amenity-item"><i class="fas fa-wifi"></i> WiFi</span>
+                <span class="amenity-item"><i class="fas fa-phone"></i> Phone</span>
+                <span class="amenity-item"><i class="fas fa-soap"></i> Toiletries</span>
+                <span class="amenity-item"><i class="fas fa-tv"></i> TV</span>
+                <span class="amenity-item"><i class="fas fa-hair-dryer"></i> Hair Dryer</span>
+                <span class="amenity-item"><i class="fas fa-wind"></i> Air Conditioning</span>
+                <span class="amenity-item"><i class="fas fa-wine-bottle"></i> Mini Bar</span>
+              </div>
+            </div>
+            
+            <div class="price-section room-price-info">
+              <div class="price-label">Base Price</div>
+              <div class="price-main">£<span id="base-price-double">120</span></div>
+              <div class="price-sub">per night (20% more than Standard)</div>
+            </div>
+            
+            <div class="room-footer">
+              <div class="availability-status">
+                <div class="available-indicator">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Available</span>
+                </div>
+              </div>
+              
+              <div class="booking-action">
+                <button type="button" class="btn-select-room" data-room-type="double">
+                  SELECT THIS ROOM
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAMILY ROOM -->
+        <div class="room-card" data-room-type="family" data-base-price="150" data-max-guests="4">
+          <!-- ROOM IMAGE -->
+          <div class="room-image-top">
+            <img src="{{ url_for('static', filename='images/rooms/family.jpg') }}" 
+                 alt="Family Room" class="room-img-main"
+                 onerror="this.src='https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+          </div>
+          
+          <div class="room-details">
+            <div class="room-header">
+              <h3 class="room-title">Family Room</h3>
+            </div>
+            
+            <p class="room-description">Large room perfect for families</p>
+            
+            <div class="room-specs">
+              <div class="spec-item">
+                <i class="fas fa-users"></i>
+                <span>Up to 4 guests</span>
+              </div>
+              <div class="spec-item">
+                <i class="fas fa-bed"></i>
+                <span>2 Double Beds</span>
+              </div>
+            </div>
+            
+            <div class="amenities-section">
+              <div class="amenities-list">
+                <span class="amenity-item"><i class="fas fa-wifi"></i> WiFi</span>
+                <span class="amenity-item"><i class="fas fa-phone"></i> Phone</span>
+                <span class="amenity-item"><i class="fas fa-soap"></i> Toiletries</span>
+                <span class="amenity-item"><i class="fas fa-tv"></i> TV</span>
+                <span class="amenity-item"><i class="fas fa-hair-dryer"></i> Hair Dryer</span>
+                <span class="amenity-item"><i class="fas fa-wind"></i> Air Conditioning</span>
+                <span class="amenity-item"><i class="fas fa-wine-bottle"></i> Mini Bar</span>
+                <span class="amenity-item"><i class="fas fa-coffee"></i> Breakfast</span>
+              </div>
+            </div>
+            
+            <div class="price-section room-price-info">
+              <div class="price-label">Base Price</div>
+              <div class="price-main">£<span id="base-price-family">150</span></div>
+              <div class="price-sub">per night (50% more than Standard)</div>
+            </div>
+            
+            <div class="room-footer">
+              <div class="availability-status">
+                <div class="available-indicator">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Available</span>
+                </div>
+              </div>
+              
+              <div class="booking-action">
+                <button type="button" class="btn-select-room" data-room-type="family">
+                  SELECT THIS ROOM
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- PRICE CALCULATION SECTION -->
+      <div class="price-calculation-section" id="price-calculation" style="display: none;">
+        <h3>Price Calculation</h3>
+        
+        <div class="price-details">
+          <div class="price-row">
+            <span class="price-label">Selected Room Type:</span>
+            <span class="price-value" id="selected-room-type">-</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Season:</span>
+            <span class="price-value" id="season-type">-</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Base Price (per night):</span>
+            <span class="price-value">£<span id="base-price-display">0</span></span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Number of Nights:</span>
+            <span class="price-value" id="num-nights">0</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Room Price Subtotal:</span>
+            <span class="price-value">£<span id="room-subtotal">0</span></span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Additional Guest Surcharge:</span>
+            <span class="price-value">£<span id="guest-surcharge">0</span></span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Advance Booking Discount:</span>
+            <span class="price-value" id="advance-discount">0% (£0)</span>
+          </div>
+          <div class="price-row total-price">
+            <span class="price-label">TOTAL PRICE:</span>
+            <span class="price-value">£<span id="total-price">0</span></span>
+          </div>
+        </div>
+        
+        <div class="calculation-note">
+          <i class="fas fa-info-circle"></i> 
+          Note: Double room is 20% more than Standard. Family room is 50% more than Standard. 
+          For 2nd guest in Double room, additional 10% of Standard price is charged.
+          Peak season rates apply for April-August and November-December.
+        </div>
+        <button id="btn-proceed-booking" type="button" disabled>
+        Proceed to Booking
+    </button>
+      </div>
+    </div>
+    
+    <!-- RIGHT COLUMN - BOOKING UPDATE BOX -->
+    <div class="booking-sidebar">
+      <div class="booking-update-card">
+        <form id="update-booking-form" class="update-form-sidebar">
+          <!-- ROOM TYPE SELECTION -->
+          <div class="form-group-sidebar">
+            <label class="sidebar-label">ROOM TYPE</label>
+            <div class="filter-dropdown">
+              <select class="filter-select" id="room-type-sidebar">
+                <option value="" selected disabled>Select Room Type</option>
+                <option value="single">Single Room (Standard)</option>
+                <option value="double">Double Room</option>
+                <option value="family">Family Room</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- NUMBER OF GUESTS -->
+          <div class="form-group-sidebar">
+            <label class="sidebar-label">NUMBER OF GUESTS</label>
+            <div class="filter-dropdown">
+              <select class="filter-select" id="num-guests-sidebar">
+                <option value="1">1 Guest</option>
+                <option value="2">2 Guests</option>
+                <option value="3">3 Guests</option>
+                <option value="4">4 Guests</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Horizontal Line -->
+          <div class="sidebar-divider"></div>
+          
+          <!-- SELECT YOUR DATES TITLE -->
+          <div class="update-card-header">
+            <h3>SELECT YOUR DATES</h3>
+          </div>
+          
+          <!-- CHECK IN -->
+          <div class="form-group-sidebar">
+            <label class="sidebar-label">CHECK IN</label>
+            <input type="date" id="check-in-sidebar" class="date-input" required>
+          </div>
+          
+          <!-- CHECK OUT -->
+          <div class="form-group-sidebar">
+            <label class="sidebar-label">CHECK OUT</label>
+            <input type="date" id="check-out-sidebar" class="date-input" required>
+          </div>
+          
+          <!-- CALCULATE PRICE BUTTON -->
+          <div class="availability-button-bottom">
+            <button type="button" id="calculate-price" class="btn-check-availability">
+              CALCULATE PRICE
+            </button>
+          </div>
+        </form>
+        
+        <!-- DISCOUNT INFO -->
+        <div class="discount-section">
+          <h4>Early Booking Discounts</h4>
+          <div class="discount-grid">
+            <div class="discount-item">
+              <span class="days-range">80-90 days</span>
+              <span class="discount-percent">30% OFF</span>
+            </div>
+            <div class="discount-item">
+              <span class="days-range">60-79 days</span>
+              <span class="discount-percent">20% OFF</span>
+            </div>
+            <div class="discount-item">
+              <span class="days-range">45-59 days</span>
+              <span class="discount-percent">10% OFF</span>
+            </div>
+            <div class="discount-item">
+              <span class="days-range">Under 45 days</span>
+              <span class="discount-percent">No discount</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- SEASON INFO -->
+        <div class="season-section">
+          <h4><i class="fas fa-calendar-star"></i> Season Information</h4>
+          <div class="season-info">
+            <div class="season-row">
+              <span class="season-type">Peak Season:</span>
+              <span class="season-dates">April - August, Nov - Dec</span>
+            </div>
+            <div class="season-row">
+              <span class="season-type">Off-Peak Season:</span>
+              <span class="season-dates">Sep - Oct, Jan - Mar</span>
+            </div>
+            <div class="season-note">
+              <i class="fas fa-info-circle"></i> Check-in date determines season pricing
+            </div>
+          </div>
+        </div>
+        
+        <!-- QUICK FACTS -->
+        <div class="quick-facts">
+          <h4><i class="fas fa-info-circle"></i> Quick Facts</h4>
+          <div class="facts-list">
+            <div class="fact-item">
+              <i class="fas fa-moon"></i>
+              <span>Max stay: 30 nights</span>
+            </div>
+            <div class="fact-item">
+              <i class="fas fa-calendar-times"></i>
+              <span>Free cancellation 60+ days</span>
+            </div>
+            <div class="fact-item">
+              <i class="fas fa-clock"></i>
+              <span>Book up to 3 months ahead</span>
+            </div>
+            <div class="fact-item">
+              <i class="fas fa-user-friends"></i>
+              <span>Max 4 guests per room</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      console.log("Booking JS loaded");
+  
+      /* -------------------------
+         HOTEL & CITY (SAFE)
+      -------------------------- */
+      const hotelId = parseInt("{{ hotel.hotel_id }}", 10);
+      const city = "{{ hotel.city }}";
+  
+      if (isNaN(hotelId)) {
+          alert("Hotel ID missing");
+          return;
+      }
+  
+      /* -------------------------
+         STANDARD CITY RATES
+      -------------------------- */
+      const standardRates = {
+          'Aberdeen': { peak: 140, offpeak: 70 },
+          'Belfast': { peak: 130, offpeak: 70 },
+          'Birmingham': { peak: 150, offpeak: 75 },
+          'Bristol': { peak: 140, offpeak: 70 },
+          'Cardiff': { peak: 130, offpeak: 70 },
+          'Edinburgh': { peak: 160, offpeak: 80 },
+          'Glasgow': { peak: 150, offpeak: 75 },
+          'London': { peak: 200, offpeak: 100 },
+          'Manchester': { peak: 180, offpeak: 90 },
+          'Newcastle': { peak: 120, offpeak: 70 },
+          'Oxford': { peak: 180, offpeak: 90 },
+          'Kent': { peak: 140, offpeak: 80 }
+      };
+  
+      const cityRate = standardRates[city] || standardRates['London'];
+  
+      /* -------------------------
+         DATE DEFAULTS
+      -------------------------- */
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      const dayAfter = new Date(today);
+      dayAfter.setDate(today.getDate() + 2);
+  
+      document.getElementById('check-in-sidebar').value = tomorrow.toISOString().split('T')[0];
+      document.getElementById('check-out-sidebar').value = dayAfter.toISOString().split('T')[0];
+      document.getElementById('check-in-sidebar').min = today.toISOString().split('T')[0];
+  
+      /* -------------------------
+         HELPERS
+      -------------------------- */
+      function isPeakSeason(date) {
+          const m = date.getMonth() + 1;
+          return (m >= 4 && m <= 8) || m === 11 || m === 12;
+      }
+  
+      function daysInAdvance(checkIn) {
+          const t = new Date();
+          t.setHours(0,0,0,0);
+          checkIn.setHours(0,0,0,0);
+          return Math.ceil((checkIn - t) / 86400000);
+      }
+  
+      function discountPercent(days) {
+          if (days >= 80 && days <= 90) return 30;
+          if (days >= 60 && days <= 79) return 20;
+          if (days >= 45 && days <= 59) return 10;
+          return 0;
+      }
+  
+      /* -------------------------
+         ROOM TYPE GUEST LIMITS
+      -------------------------- */
+      const roomTypeLimits = {
+          'single': 1,    
+          'double': 2,   
+          'family': 4     
+      };
+  
+          function updateGuestsDropdown(roomType) {
+          const guestsDropdown = document.getElementById('num-guests-sidebar');
+          const maxGuests = roomTypeLimits[roomType] || 4;
+          const currentValue = parseInt(guestsDropdown.value) || 1;
+          
+          console.log(`Updating guests dropdown for ${roomType} room, max guests: ${maxGuests}`);
+          
+          for (let i = 0; i < guestsDropdown.options.length; i++) {
+              const option = guestsDropdown.options[i];
+              const optionValue = parseInt(option.value);
+              
+              if (optionValue <= maxGuests) {
+                  option.disabled = false;
+                  option.style.display = 'block';
+              } else {
+                  option.disabled = true;
+                  option.style.display = 'none';
+              }
+          }
+          
+          if (currentValue > maxGuests) {
+              guestsDropdown.value = maxGuests.toString();
+              console.log(`Reset guests from ${currentValue} to ${maxGuests} for ${roomType} room`);
+          }
+          
+          updateRoomCardsGuestInfo();
+      }
+  
+      /* -------------------------
+         UPDATE ROOM CARDS GUEST INFO
+      -------------------------- */
+      function updateRoomCardsGuestInfo() {
+          document.querySelectorAll('.room-card').forEach(card => {
+              const roomType = card.getAttribute('data-room-type');
+              const maxGuests = roomTypeLimits[roomType] || 1;
+              
+              const guestInfo = card.querySelector('.spec-item i.fa-user, .spec-item i.fa-user-friends, .spec-item i.fa-users');
+              if (guestInfo) {
+                  const parentSpan = guestInfo.closest('.spec-item').querySelector('span');
+                  if (parentSpan) {
+                      if (roomType === 'single') {
+                          parentSpan.innerHTML = `<strong>Up to ${maxGuests} guest</strong>`;
+                      } else {
+                          parentSpan.innerHTML = `<strong>Up to ${maxGuests} guests</strong>`;
+                      }
+                  }
+              }
+          });
+      }
+  
+      /* -------------------------
+         HIGHLIGHT SELECTED ROOM CARD
+      -------------------------- */
+      function highlightSelectedRoomCard(roomType) {
+          document.querySelectorAll('.room-card').forEach(card => {
+              card.style.border = '1px solid #eaeaea';
+              card.style.boxShadow = 'none';
+              card.style.backgroundColor = '';
+              
+              // Reset button text
+              const button = card.querySelector('.btn-select-room');
+              if (button) {
+                  button.textContent = 'SELECT THIS ROOM';
+                  button.style.background = '';
+                  button.style.color = '';
+              }
+          });
+          
+          const selectedCard = document.querySelector(`.room-card[data-room-type="${roomType}"]`);
+          if (selectedCard) {
+              selectedCard.style.border = '2px solid #3498db';
+              selectedCard.style.boxShadow = '0 4px 20px rgba(52, 152, 219, 0.2)';
+              selectedCard.style.backgroundColor = '#f8fafc';
+              
+              // Update button
+              const button = selectedCard.querySelector('.btn-select-room');
+              if (button) {
+                  button.textContent = '✓ SELECTED';
+                  button.style.background = 'linear-gradient(135deg, #27ae60, #219653)';
+                  button.style.color = 'white';
+              }
+          }
+      }
+  
+      /* -------------------------
+         GLOBAL DATA
+      -------------------------- */
+      let bookingData = null;
+  
+      /* -------------------------
+         PRICE CALCULATION
+      -------------------------- */
+      function calculatePrice() {
+          const roomType = document.getElementById('room-type-sidebar').value;
+          const guests = parseInt(document.getElementById('num-guests-sidebar').value);
+          const checkInStr = document.getElementById('check-in-sidebar').value;
+          const checkOutStr = document.getElementById('check-out-sidebar').value;
+  
+          if (!roomType || !checkInStr || !checkOutStr) {
+              alert("Please fill all booking details");
+              return;
+          }
+  
+          const checkIn = new Date(checkInStr);
+          const checkOut = new Date(checkOutStr);
+  
+          if (checkOut <= checkIn) {
+              alert("Check-out must be after check-in");
+              return;
+          }
+  
+          const maxGuests = roomTypeLimits[roomType] || 4;
+          if (guests > maxGuests) {
+              alert(`This ${roomType} room can only accommodate up to ${maxGuests} guest${maxGuests > 1 ? 's' : ''}. Please adjust your selection.`);
+              document.getElementById('num-guests-sidebar').value = maxGuests.toString();
+              return;
+          }
+  
+          const nights = Math.ceil((checkOut - checkIn) / 86400000);
+          const peak = isPeakSeason(checkIn);
+          const baseStandard = peak ? cityRate.peak : cityRate.offpeak;
+  
+          let pricePerNight = baseStandard;
+          let guestSurcharge = 0;
+  
+          if (roomType === 'double') {
+              pricePerNight = baseStandard * 1.2;
+              if (guests >= 2) {
+                  guestSurcharge = baseStandard * 0.1 * nights;
+              }
+          }
+  
+          if (roomType === 'family') {
+              pricePerNight = baseStandard * 1.5;
+          }
+  
+          const roomSubtotal = pricePerNight * nights;
+          const subtotal = roomSubtotal + guestSurcharge;
+  
+          const advanceDays = daysInAdvance(checkIn);
+          const discount = discountPercent(advanceDays);
+          const discountAmount = subtotal * discount / 100;
+          const total = subtotal - discountAmount;
+  
+          /* -------------------------
+             UPDATE UI
+          -------------------------- */
+          document.getElementById('selected-room-type').textContent =
+              roomType.charAt(0).toUpperCase() + roomType.slice(1) + 
+              ` Room (${guests} guest${guests > 1 ? 's' : ''})`;
+  
+          document.getElementById('season-type').textContent =
+              peak ? "Peak Season" : "Off-Peak Season";
+  
+          document.getElementById('base-price-display').textContent =
+              pricePerNight.toFixed(2);
+  
+          document.getElementById('num-nights').textContent = nights;
+          document.getElementById('room-subtotal').textContent = roomSubtotal.toFixed(2);
+          document.getElementById('guest-surcharge').textContent = guestSurcharge.toFixed(2);
+  
+          document.getElementById('advance-discount').textContent =
+              `${discount}% (£${discountAmount.toFixed(2)})`;
+  
+          document.getElementById('total-price').textContent = total.toFixed(2);
+  
+          document.getElementById('price-calculation').style.display = 'block';
+          document.getElementById('btn-proceed-booking').disabled = false;
+  
+          bookingData = {
+              roomType,
+              guests,
+              checkIn: checkInStr,
+              checkOut: checkOutStr
+          };
+          
+          console.log("Price calculated:", bookingData);
+      }
+  
+      /* -------------------------
+         EVENT LISTENERS
+      -------------------------- */
+      document.getElementById('room-type-sidebar')
+          .addEventListener('change', function() {
+              const selectedRoomType = this.value;
+              console.log("Room type changed to:", selectedRoomType);
+              
+              updateGuestsDropdown(selectedRoomType);
+              
+              highlightSelectedRoomCard(selectedRoomType);
+          });
+  
+      // Room card selection buttons
+      document.querySelectorAll('.btn-select-room').forEach(button => {
+          button.addEventListener('click', function() {
+              const roomType = this.getAttribute('data-room-type');
+              console.log("Room card selected:", roomType);
+              
+              document.getElementById('room-type-sidebar').value = roomType;
+              
+              updateGuestsDropdown(roomType);
+              
+              highlightSelectedRoomCard(roomType);
+              
+              setTimeout(() => {
+                  document.querySelector('.booking-sidebar').scrollIntoView({ 
+                      behavior: 'smooth', 
+                      block: 'start' 
+                  });
+              }, 300);
+          });
+      });
+  
+      // Guests dropdown change - validate selection
+      document.getElementById('num-guests-sidebar')
+          .addEventListener('change', function() {
+              const roomType = document.getElementById('room-type-sidebar').value;
+              const guests = parseInt(this.value);
+              const maxGuests = roomTypeLimits[roomType] || 4;
+              
+              if (guests > maxGuests) {
+                  alert(`This ${roomType} room can only accommodate up to ${maxGuests} guest${maxGuests > 1 ? 's' : ''}.`);
+                  this.value = maxGuests.toString();
+              }
+          });
+  
+      // Calculate price button
+      document.getElementById('calculate-price')
+          .addEventListener('click', calculatePrice);
+  
+      // Proceed to booking button
+      document.getElementById('btn-proceed-booking')
+          .addEventListener('click', function () {
+              if (!bookingData) {
+                  alert("Please calculate price first");
+                  return;
+              }
+  
+              const maxGuests = roomTypeLimits[bookingData.roomType] || 4;
+              if (bookingData.guests > maxGuests) {
+                  alert(`Error: ${bookingData.roomType} room can only accommodate up to ${maxGuests} guests.`);
+                  return;
+              }
+  
+              const params = new URLSearchParams({
+                  room_type: bookingData.roomType,
+                  check_in: bookingData.checkIn,
+                  check_out: bookingData.checkOut,
+                  num_guests: bookingData.guests
+              });
+  
+              const url = `/booking_confirmation/${hotelId}?${params.toString()}`;
+              console.log("Redirecting to booking confirmation:", url);
+              window.location.href = url;
+          });
+  
+      /* -------------------------
+         INITIAL SETUP
+      -------------------------- */
+      const defaultRoomType = 'single';
+      document.getElementById('room-type-sidebar').value = defaultRoomType;
+      
+      updateGuestsDropdown(defaultRoomType);
+      
+      highlightSelectedRoomCard(defaultRoomType);
+      
+      const style = document.createElement('style');
+      style.textContent = `
+          .room-card {
+              transition: all 0.3s ease;
+          }
+          .btn-select-room {
+              transition: all 0.3s ease;
+          }
+          select.filter-select option:disabled {
+              color: #ccc;
+              background-color: #f8f9fa;
+          }
+          select.filter-select option[style*="display: none"] {
+              display: none !important;
+          }
+      `;
+      document.head.appendChild(style);
+      
+      console.log("Booking page initialized successfully");
+  });
+</script>
+
+{% endblock %}

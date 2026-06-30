@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block title %}{{ hotel.title }} - Rooms{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/room.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<!-- HERO SECTION -->
+<section class="hotel-hero" style="background-image: url('{{ hotel.hero_image }}');">
+  <div class="hero-overlay">
+    <div class="hero-content">
+      <h1>{{ hotel.title }}</h1>
+      <p>Experience luxury in the heart of {{ hotel.city }} with stunning views.</p>
+
+      <!-- Amenities Icons -->
+      <div class="hero-amenities">
+        <div class="amenity">
+          <i class="fas fa-swimming-pool"></i>
+          <span>Swimming Pool</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-dumbbell"></i>
+          <span>Fitness Center</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-utensils"></i>
+          <span>Restaurant</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-spa"></i>
+          <span>Spa</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-parking"></i>
+          <span>Parking</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-cocktail"></i>
+          <span>Bar</span>
+        </div>
+        <div class="amenity">
+          <i class="fas fa-concierge-bell"></i>
+          <span>Room Service</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FILTER SECTION -->
+<section class="filter-section">
+  <div class="container">
+    <div class="filter-container">
+      <div class="filter-item">
+        <label for="check-in">Check In</label>
+        <input type="date" id="check-in" class="filter-input">
+      </div>
+      
+      <div class="filter-item">
+        <label for="check-out">Check Out</label>
+        <input type="date" id="check-out" class="filter-input">
+      </div>
+      
+      <div class="filter-item">
+        <label for="num-guests">Number of Guests</label>
+        <select id="num-guests" class="filter-select">
+          <option value="1">1 Guest</option>
+          <option value="2" selected>2 Guests</option>
+          <option value="3">3 Guests</option>
+          <option value="4">4 Guests</option>
+        </select>
+      </div>
+      
+      <div class="filter-item">
+        <label for="currency">Currency</label>
+        <select id="currency" class="filter-select">
+          <option value="GBP">£ GBP</option>
+          <option value="USD">$ USD</option>
+          <option value="EUR">€ EUR</option>
+        </select>
+      </div>
+      
+      <div class="filter-item">
+        <label for="room-type">Room Type</label>
+        <select id="room-type" class="filter-select">
+          <option value="all">All Types</option>
+          <option value="single">Single</option>
+          <option value="double">Double</option>
+          <option value="family">Family</option>
+        </select>
+      </div>
+      
+      <div class="filter-item">
+        <button id="apply-filters" class="btn-apply">CHECK AVAILABILITY</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROOMS LISTING -->
+<div class="container rooms-section">
+  <h2 class="section-title">Available Room Types</h2>
+  
+  <div id="rooms-container" class="rooms-grid">
+    <!-- Single Room -->
+    <div class="room-card-modern" data-room-type="single" data-price="200">
+      <div class="room-image-container">
+        <img src="{{ url_for('static', filename='images/rooms/single.jpg') }}" 
+             alt="Single Room" class="room-image-modern">
+      </div>
+      <div class="room-details">
+        <div class="room-header-modern">
+          <h3 class="room-title-modern">Single Room</h3>
+          <p class="room-subtitle">Comfortable room for single occupancy</p>
+        </div>
+        <div class="room-features">
+          <div class="feature-item">
+            <i class="fas fa-user"></i><span>Up to 1 guests</span>
+          </div>
+        </div>
+        <div class="amenities-list">
+          <div class="amenity-item"><i class="fas fa-wifi"></i><span>WiFi</span></div>
+          <div class="amenity-item"><i class="fas fa-tv"></i><span>TV</span></div>
+          <div class="amenity-item"><i class="fas fa-snowflake"></i><span>Air Conditioning</span></div>
+          <div class="amenity-item"><i class="fas fa-phone"></i><span>Phone</span></div>
+          <div class="amenity-item"><i class="fas fa-wind"></i><span>Hair Dryer</span></div>
+        </div>
+        <div class="room-footer-modern">
+          <div class="price-info">
+            <span class="price-from">From</span>
+            <span class="price-amount" data-original-price="200">
+              <span class="currency-symbol">£</span>200
+            </span>
+            <span class="price-period">per night</span>
+          </div>
+          <div class="availability-badge">
+            <span class="rooms-available">Check availability</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Double Room -->
+    <div class="room-card-modern" data-room-type="double" data-price="240">
+      <div class="room-image-container">
+        <img src="{{ url_for('static', filename='images/rooms/double.jpg') }}" 
+             alt="Double Room" class="room-image-modern">
+      </div>
+      <div class="room-details">
+        <div class="room-header-modern">
+          <h3 class="room-title-modern">Double Room</h3>
+          <p class="room-subtitle">Spacious room for two guests</p>
+        </div>
+        <div class="room-features">
+          <div class="feature-item">
+            <i class="fas fa-user-friends"></i><span>Up to 2 guests</span>
+          </div>
+        </div>
+        <div class="amenities-list">
+          <div class="amenity-item"><i class="fas fa-wifi"></i><span>WiFi</span></div>
+          <div class="amenity-item"><i class="fas fa-tv"></i><span>TV</span></div>
+          <div class="amenity-item"><i class="fas fa-snowflake"></i><span>Air Conditioning</span></div>
+          <div class="amenity-item"><i class="fas fa-phone"></i><span>Phone</span></div>
+          <div class="amenity-item"><i class="fas fa-wind"></i><span>Hair Dryer</span></div>
+          <div class="amenity-item"><i class="fas fa-wine-glass"></i><span>Mini Bar</span></div>
+          <div class="amenity-item"><i class="fas fa-soap"></i><span>Toiletries</span></div>
+        </div>
+        <div class="room-footer-modern">
+          <div class="price-info">
+            <span class="price-from">From</span>
+            <span class="price-amount" data-original-price="240">
+              <span class="currency-symbol">£</span>240
+            </span>
+            <span class="price-period">per night</span>
+          </div>
+          <div class="availability-badge">
+            <span class="rooms-available">Check availability</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Family Room -->
+    <div class="room-card-modern" data-room-type="family" data-price="300">
+      <div class="room-image-container">
+        <img src="{{ url_for('static', filename='images/rooms/family.jpg') }}" 
+             alt="Family Room" class="room-image-modern">
+      </div>
+      <div class="room-details">
+        <div class="room-header-modern">
+          <h3 class="room-title-modern">Family Room</h3>
+          <p class="room-subtitle">Large room perfect for families</p>
+        </div>
+        <div class="room-features">
+          <div class="feature-item">
+            <i class="fas fa-users"></i><span>Up to 4 guests</span>
+          </div>
+        </div>
+        <div class="amenities-list">
+          <div class="amenity-item"><i class="fas fa-wifi"></i><span>WiFi</span></div>
+          <div class="amenity-item"><i class="fas fa-tv"></i><span>TV</span></div>
+          <div class="amenity-item"><i class="fas fa-snowflake"></i><span>Air Conditioning</span></div>
+          <div class="amenity-item"><i class="fas fa-phone"></i><span>Phone</span></div>
+          <div class="amenity-item"><i class="fas fa-wind"></i><span>Hair Dryer</span></div>
+          <div class="amenity-item"><i class="fas fa-wine-glass"></i><span>Mini Bar</span></div>
+          <div class="amenity-item"><i class="fas fa-soap"></i><span>Toiletries</span></div>
+          <div class="amenity-item"><i class="fas fa-coffee"></i><span>Breakfast Included</span></div>
+        </div>
+        <div class="room-footer-modern">
+          <div class="price-info">
+            <span class="price-from">From</span>
+            <span class="price-amount" data-original-price="300">
+              <span class="currency-symbol">£</span>300
+            </span>
+            <span class="price-period">per night</span>
+          </div>
+          <div class="availability-badge">
+            <span class="rooms-available">Check availability</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const loggedin = "{{ 'true' if session.get('loggedin') else 'false' }}";
+  const isLoggedIn = loggedin === "true";
+  const hotelId = "{{ hotel.hotel_id }}";
+  
+  const conversionRates = { 'GBP': 1, 'USD': 1.27, 'EUR': 1.17 };
+  const currencySymbols = { 'GBP': '£', 'USD': '$', 'EUR': '€' };
+  
+  document.addEventListener('DOMContentLoaded', function() {
+      const today = new Date().toISOString().split('T')[0];
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+      
+      const checkInInput = document.getElementById('check-in');
+      const checkOutInput = document.getElementById('check-out');
+      
+      checkInInput.setAttribute('min', today);
+      checkInInput.value = tomorrowStr;
+      
+      checkOutInput.setAttribute('min', tomorrowStr);
+      checkOutInput.value = new Date(tomorrow);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      checkOutInput.value = tomorrow.toISOString().split('T')[0];
+  
+      checkInInput.addEventListener('change', function() {
+          const checkIn = new Date(this.value);
+          const nextDay = new Date(checkIn);
+          nextDay.setDate(nextDay.getDate() + 1);
+          const minCheckOut = nextDay.toISOString().split('T')[0];
+          checkOutInput.setAttribute('min', minCheckOut);
+  
+          const checkOut = checkOutInput.value;
+          if (checkOut && new Date(checkOut) < new Date(minCheckOut)) {
+              checkOutInput.value = minCheckOut;
+          }
+      });
+  
+      document.getElementById('currency').addEventListener('change', function() {
+          const selectedCurrency = this.value;
+          const priceElements = document.querySelectorAll('.price-amount');
+  
+          priceElements.forEach(element => {
+              const originalPrice = parseFloat(element.dataset.originalPrice);
+              const convertedPrice = (originalPrice * conversionRates[selectedCurrency]).toFixed(2);
+              const symbol = currencySymbols[selectedCurrency];
+  
+              element.querySelector('.currency-symbol').textContent = symbol;
+              element.childNodes[1].textContent = convertedPrice;
+          });
+      });
+  
+      document.getElementById('apply-filters').addEventListener('click', function() {
+          const checkIn = document.getElementById('check-in').value;
+          const checkOut = document.getElementById('check-out').value;
+          const numGuests = document.getElementById('num-guests').value;
+          const roomType = document.getElementById('room-type').value;
+          const currency = document.getElementById('currency').value;
+  
+          if (!checkIn || !checkOut) { 
+              alert('Please select check-in and check-out dates'); 
+              return; 
+          }
+          
+          if (new Date(checkOut) <= new Date(checkIn)) { 
+              alert('Check-out date must be after check-in date'); 
+              return; 
+          }
+  
+          // Check if user is logged in
+          if (!isLoggedIn) {
+              alert('Please login first to check availability.');
+              window.location.href = '/login';
+              return;
+          }
+  
+          // Calculate nights
+          const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
+  
+          const roomCards = document.querySelectorAll('.room-card-modern');
+          let visibleCount = 0;
+  
+          roomCards.forEach(card => {
+              const cardRoomType = card.dataset.roomType;
+  
+              if (roomType === 'all' || cardRoomType === roomType) {
+                  card.style.display = 'grid';
+                  visibleCount++;
+  
+                  const priceAmount = card.querySelector('.price-amount');
+                  const originalPrice = parseFloat(priceAmount.dataset.originalPrice);
+                  const totalPrice = (originalPrice * conversionRates[currency] * nights).toFixed(2);
+                  const symbol = currencySymbols[currency];
+  
+                  priceAmount.querySelector('.currency-symbol').textContent = symbol;
+                  priceAmount.childNodes[1].textContent = totalPrice;
+  
+                  card.querySelector('.price-period').textContent = `for ${nights} night${nights > 1 ? 's' : ''}`;
+              } else {
+                  card.style.display = 'none';
+              }
+          });
+  
+          if (visibleCount === 0) {
+              if (!document.querySelector('.no-results-message')) {
+                  const noResults = document.createElement('div');
+                  noResults.className = 'no-results-message';
+                  noResults.innerHTML = '<i class="fas fa-search"></i><p>No rooms match your filter criteria</p>';
+                  document.getElementById('rooms-container').appendChild(noResults);
+              }
+          } else {
+              const noResults = document.querySelector('.no-results-message');
+              if (noResults) noResults.remove();
+          }
+  
+          const bookingUrl = `/booking/${hotelId}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&num_guests=${encodeURIComponent(numGuests)}&room_type=${encodeURIComponent(roomType)}&currency=${encodeURIComponent(currency)}`;
+          window.location.href = bookingUrl;
+      });
+  });
+  </script>
+{% endblock %}

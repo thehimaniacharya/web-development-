@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Login - WorldHotel{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="page-center">
+  <div class="login-card">
+
+    <h2>Login</h2>
+
+    <form method="post">
+
+      <div class="form-row">
+        <div class="input-box">
+          <label>Username or Email</label>
+          <input type="text" name="username_email" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="input-box">
+          <label>Password</label>
+          <input type="password" name="password" class="form-control" required>
+        </div>
+      </div>
+
+      <button class="btn btn-primary mt-3">Login</button>
+
+      <p class="login-link mt-2">
+        Don't have an account?
+        <a href="{{ url_for('register') }}">Register</a>
+      </p>
+
+      <p class="login-link">
+        <a href="#">Forgot Password?</a>
+      </p>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

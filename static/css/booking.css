@@ -1,0 +1,626 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Main Booking Container */
+.main-booking-container {
+    padding: 30px 0;
+}
+
+.booking-layout {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 40px;
+}
+
+/* Hotel Hero Section */
+.hotel-hero {
+    width: 100%;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-content {
+    text-align: center;
+    color: white;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.hero-content h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.hero-amenities {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.amenity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.amenity i {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.amenity span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Rooms Column */
+.rooms-column {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.section-title {
+    font-size: 32px;
+    font-weight: 600;
+    color: #0a0a0a;
+    margin-bottom: 10px;
+}
+
+.rooms-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Room Cards */
+.room-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+}
+
+.room-image-top {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.room-img-main {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.room-card:hover .room-img-main {
+    transform: scale(1.05);
+}
+
+.room-details {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.room-header {
+    margin-bottom: 10px;
+}
+
+.room-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 5px;
+}
+
+.room-description {
+    color: #718096;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.room-specs {
+    display: flex;
+    gap: 20px;
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4a5568;
+    font-size: 15px;
+}
+
+.spec-item i {
+    color: #4299e1;
+}
+
+.amenities-section {
+    margin-top: 10px;
+}
+
+.amenities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.amenity-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #edf2f7;
+    color: #4a5568;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.amenity-item i {
+    color: #4299e1;
+}
+
+.price-section {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.price-label {
+    font-size: 14px;
+    color: #718096;
+}
+
+.price-main {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.price-sub {
+    font-size: 14px;
+    color: #718096;
+}
+
+.room-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.availability-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.available-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #38a169;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.available-indicator i {
+    font-size: 16px;
+}
+
+.unavailable-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #e53e3e;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.booking-action {
+    display: flex;
+    align-items: center;
+}
+
+.btn-book-now {
+    background-color: #2d3748;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-book-now:hover {
+    background-color: #4a5568;
+}
+
+.btn-book-now:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+}
+
+.btn-book-now.disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+}
+
+/* Booking Sidebar */
+.booking-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.booking-update-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    border: 1px solid #e2e8f0;
+}
+
+.update-form-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.form-group-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 5px;
+}
+
+.filter-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #4a5568;
+    appearance: none;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.filter-dropdown::after {
+    content: "▼";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #718096;
+    pointer-events: none;
+    font-size: 12px;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 10px 0;
+}
+
+.update-card-header {
+    margin-bottom: 20px;
+}
+
+.update-card-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.date-input {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #4a5568;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+/* CHECK AVAILABILITY BUTTON - BLACK COLOR */
+.btn-check-availability {
+    background-color: #000000 !important;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-check-availability:hover {
+    background-color: #333333 !important;
+}
+
+.availability-button-bottom {
+    margin-top: 20px;
+}
+
+/* Discount Section */
+.discount-section {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.discount-section h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 20px;
+}
+
+.discount-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.discount-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.discount-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.days-range {
+    color: #4a5568;
+    font-size: 15px;
+}
+
+.discount-percent {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* Season Section */
+.season-section {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.season-section h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.season-section h4 i {
+    color: #4299e1;
+}
+
+.season-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.season-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.season-type {
+    color: #4a5568;
+    font-size: 15px;
+}
+
+.season-dates {
+    color: #2d3748;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.season-note {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #edf2f7;
+    border-radius: 6px;
+    color: #4a5568;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.season-note i {
+    color: #4299e1;
+}
+
+/* Quick Facts */
+.quick-facts {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.quick-facts h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quick-facts h4 i {
+    color: #4299e1;
+}
+
+.facts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.fact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #4a5568;
+    font-size: 15px;
+}
+
+.fact-item i {
+    color: #4299e1;
+    width: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .booking-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .hero-content h1 {
+        font-size: 36px;
+    }
+    
+    .hero-amenities {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 28px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+    }
+    
+    .hero-amenities {
+        gap: 15px;
+    }
+    
+    .amenity {
+        min-width: 80px;
+    }
+    
+    .room-footer {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .booking-action {
+        justify-content: center;
+    }
+    
+    .btn-book-now {
+        width: 100%;
+    }
+    
+    .season-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}

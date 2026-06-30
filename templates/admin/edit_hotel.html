@@ -1,0 +1,118 @@
+<!-- templates/admin/edit_hotel.html -->
+{% extends 'admin/base.html' %}
+
+{% block head %}
+<title>Edit Hotel - Admin Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-forms.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="admin-container fade-in">
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <h1><i class="fas fa-edit"></i> EDIT HOTEL</h1>
+        <p><i class="fas fa-hotel"></i> Update hotel details: {{ hotel.title }}</p>
+    </div>
+
+    <!-- Admin Navigation -->
+    <div class="admin-nav">
+        <a href="{{ url_for('manage_hotels') }}" class="nav-link">
+            <i class="fas fa-arrow-left"></i> Back to Hotels
+        </a>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+                    <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }}"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Form Container -->
+    <div class="form-container">
+        <div class="form-title">
+            <i class="fas fa-hotel"></i> Hotel Information
+        </div>
+        
+        <form method="POST" action="{{ url_for('edit_hotel', hotel_id=hotel.hotel_id) }}">
+            <!-- Hotel Name -->
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-signature"></i> Hotel Name *</label>
+                <input type="text" name="name" class="form-control" required 
+                       value="{{ hotel.title }}" placeholder="Enter hotel name">
+            </div>
+            
+            <!-- City -->
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-city"></i> City *</label>
+                <select name="city" class="form-control" required>
+                    <option value="">Select City</option>
+                    <option value="London" {% if hotel.city == 'London' %}selected{% endif %}>London</option>
+                    <option value="Manchester" {% if hotel.city == 'Manchester' %}selected{% endif %}>Manchester</option>
+                    <option value="Birmingham" {% if hotel.city == 'Birmingham' %}selected{% endif %}>Birmingham</option>
+                    <option value="Edinburgh" {% if hotel.city == 'Edinburgh' %}selected{% endif %}>Edinburgh</option>
+                    <option value="Glasgow" {% if hotel.city == 'Glasgow' %}selected{% endif %}>Glasgow</option>
+                    <option value="Bristol" {% if hotel.city == 'Bristol' %}selected{% endif %}>Bristol</option>
+                    <option value="Cardiff" {% if hotel.city == 'Cardiff' %}selected{% endif %}>Cardiff</option>
+                    <option value="Liverpool" {% if hotel.city == 'Liverpool' %}selected{% endif %}>Liverpool</option>
+                    <option value="Oxford" {% if hotel.city == 'Oxford' %}selected{% endif %}>Oxford</option>
+                    <option value="Cambridge" {% if hotel.city == 'Cambridge' %}selected{% endif %}>Cambridge</option>
+                    <option value="York" {% if hotel.city == 'York' %}selected{% endif %}>York</option>
+                    <option value="Aberdeen" {% if hotel.city == 'Aberdeen' %}selected{% endif %}>Aberdeen</option>
+                    <option value="Belfast" {% if hotel.city == 'Belfast' %}selected{% endif %}>Belfast</option>
+                    <option value="Newcastle" {% if hotel.city == 'Newcastle' %}selected{% endif %}>Newcastle</option>
+                    <option value="Norwich" {% if hotel.city == 'Norwich' %}selected{% endif %}>Norwich</option>
+                    <option value="Nottingham" {% if hotel.city == 'Nottingham' %}selected{% endif %}>Nottingham</option>
+                    <option value="Plymouth" {% if hotel.city == 'Plymouth' %}selected{% endif %}>Plymouth</option>
+                    <option value="Swansea" {% if hotel.city == 'Swansea' %}selected{% endif %}>Swansea</option>
+                    <option value="Bournemouth" {% if hotel.city == 'Bournemouth' %}selected{% endif %}>Bournemouth</option>
+                    <option value="Kent" {% if hotel.city == 'Kent' %}selected{% endif %}>Kent</option>
+                </select>
+            </div>
+            
+            <!-- Price -->
+            <div class="form-group price-input">
+                <label class="form-label"><i class="fas fa-pound-sign"></i> Price per Night *</label>
+                <input type="number" step="0.01" name="price" 
+                       class="form-control" required min="0" 
+                       value="{{ hotel.price }}" placeholder="150.00">
+            </div>
+            
+            <!-- Address -->
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-map-marker-alt"></i> Address</label>
+                <input type="text" name="address" class="form-control" 
+                       value="{{ hotel.address or '' }}" placeholder="Street, City, Postcode">
+            </div>
+            
+            <!-- Description -->
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-align-left"></i> Description</label>
+                <textarea name="description" class="form-control" rows="4" 
+                          placeholder="Describe the hotel amenities, facilities, and features...">{{ hotel.description or '' }}</textarea>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="submit" class="admin-btn admin-btn-primary">
+                    <i class="fas fa-save"></i> Update Hotel
+                </button>
+                <a href="{{ url_for('manage_hotels') }}" class="admin-btn admin-btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <a href="{{ url_for('delete_hotel', hotel_id=hotel.hotel_id) }}" 
+                   class="admin-btn admin-btn-danger"
+                   onclick="return confirm('Are you sure you want to delete this hotel? This will also delete all rooms associated with it.');">
+                    <i class="fas fa-trash"></i> Delete Hotel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

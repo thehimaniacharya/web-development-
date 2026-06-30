@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>About Us - World Hotels</title>
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+{% endblock %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<!-- Hero Section -->
+<section class="about-hero">
+    <div class="hero-overlay">
+        <div class="container">
+            <h1>About World Hotels</h1>
+            <p class="hero-subtitle">Where every stay feels like home</p>
+        </div>
+    </div>
+</section>
+
+<!-- About Content -->
+<div class="about-container">
+    <!-- Our Story Section -->
+    <section class="our-story-section">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-history"></i> Our Story</h2>
+                <p class="section-subtitle">A Journey of Excellence</p>
+            </div>
+            
+            <div class="story-content">
+                <div class="story-text">
+                    <p class="lead-text">
+                        World Hotels began  with a single boutique hotel in London and has grown into a global collection of luxury properties. We are dedicated to providing excellent service, paying attention to every detail, and creating memorable experiences for our guests.
+                    </p>
+                    <p>
+                        Today, we continue to lead in luxury hospitality, offering a blend of timeless elegance and modern innovation in our carefully selected hotels and resorts around the world.
+                    </p>
+                </div>
+                <div class="story-image">
+                    <img src="{{ url_for('static', filename='images/contact.jpg') }}" alt="World Hotels History" class="featured-image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="divider-line">
+        <div class="container">
+            <hr>
+        </div>
+    </div>
+
+    <!-- Core Values Section -->
+    <section class="values-section">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-star"></i> Our Core Values</h2>
+                <p class="section-subtitle">The Principles That Guide Us</p>
+            </div>
+            
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3>Excellence</h3>
+                    <p>We strive for excellence in every detail, ensuring each guest experiences the highest standards of luxury and comfort.</p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Passion</h3>
+                    <p>Our passion for hospitality drives us to create memorable experiences that exceed expectations.</p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Integrity</h3>
+                    <p>We conduct our business with the highest level of integrity, building trust with our guests and partners.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leadership Team Section -->
+    <section class="leadership-section">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> Leadership Team</h2>
+                <p class="section-subtitle">Meet Our Executive Team</p>
+            </div>
+            
+            <div class="leadership-grid">
+                <div class="leader-card">
+                    <div class="leader-image">
+                        <img src="{{ url_for('static', filename='images/about/abhishek.jpeg') }}" alt="John Doe - CEO">
+                    </div>
+                    <div class="leader-info">
+                        <h3>Abhishek Dhakal</h3>
+                        <p class="leader-position">CHIEF EXECUTIVE OFFICER</p>
+                        <p class="leader-bio">With over 25 years in luxury hospitality, John leads World Hotels with vision and dedication to excellence.</p>
+                    </div>
+                </div>
+                
+                <div class="leader-card">
+                    <div class="leader-image">
+                        <img src="{{ url_for('static', filename='images/about/himani.jpeg') }}" alt="Himani Acharya - COO">
+                    </div>
+                    <div class="leader-info">
+                        <h3>Himani Acharya</h3>
+                        <p class="leader-position">CHIEF OPERATIONS OFFICER</p>
+                        <p class="leader-bio">Himani ensures our global operations run smoothly, maintaining the highest standards across all properties.</p>
+                    </div>
+                </div>
+                
+                <div class="leader-card">
+                    <div class="leader-image">
+                        <img src="{{ url_for('static', filename='images/about/aarya.jpeg') }}" alt="Aarya - CFO">
+                    </div>
+                    <div class="leader-info">
+                        <h3>Aarya Pandey</h3>
+                        <p class="leader-position">CHIEF FINANCIAL OFFICER</p>
+                        <p class="leader-bio">aarya manages our financial strategy, ensuring sustainable growth and investment in luxury experiences.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">35+</div>
+                    <div class="stat-label">Years of Excellence</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Luxury Properties</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">Countries Worldwide</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1M+</div>
+                    <div class="stat-label">Happy Guests</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- JavaScript for animations -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const valueCards = document.querySelectorAll('.value-card');
+    const leaderCards = document.querySelectorAll('.leader-card');
+    const statItems = document.querySelectorAll('.stat-item');
+    
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, observerOptions);
+    
+    [...valueCards, ...leaderCards, ...statItems].forEach(element => {
+        observer.observe(element);
+    });
+});
+</script>
+{% endblock %}

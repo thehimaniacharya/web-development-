@@ -1,0 +1,127 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Booking Details #{{ booking.booking_id }} - WorldHotel Admin{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="{{ url_for('admin_dashboard') }}" class="admin-btn admin-btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <a href="{{ url_for('manage_bookings') }}" class="admin-btn admin-btn-secondary">
+            <i class="fas fa-list"></i> All Bookings
+        </a>
+    </div>
+
+    <!-- Booking Details Card -->
+    <div class="data-table">
+        <div class="table-header">
+            <i class="fas fa-receipt"></i> Booking Details - #{{ booking.booking_id }}
+        </div>
+        
+        <div class="p-4">
+            <!-- Customer Information -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2"><i class="fas fa-user"></i> Customer Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p><strong>Name:</strong> {{ booking.customer_name }}</p>
+                        <p><strong>Email:</strong> {{ booking.customer_email }}</p>
+                        <p><strong>Booking ID:</strong> #{{ booking.booking_id }}</p>
+                    </div>
+                    <div>
+                        <p><strong>Booking Date:</strong> {{ booking.booking_date_formatted }}</p>
+                        <p><strong>Status:</strong> 
+                            {% if booking.status == 'confirmed' %}
+                            <span class="status-badge badge-success">Confirmed</span>
+                            {% elif booking.status == 'pending' %}
+                            <span class="status-badge badge-warning">Pending</span>
+                            {% elif booking.status == 'cancelled' %}
+                            <span class="status-badge badge-danger">Cancelled</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hotel Information -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2"><i class="fas fa-hotel"></i> Hotel Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p><strong>Hotel:</strong> {{ booking.hotel_name }}</p>
+                        <p><strong>Location:</strong> {{ booking.hotel_city }}</p>
+                        <p><strong>Address:</strong> {{ booking.hotel_address }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Details -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2"><i class="fas fa-calendar-alt"></i> Booking Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <p><strong>Check-in:</strong> {{ booking.check_in_formatted }}</p>
+                        <p><strong>Check-out:</strong> {{ booking.check_out_formatted }}</p>
+                    </div>
+                    <div>
+                        <p><strong>Room Type:</strong> {{ booking.room_type|title }}</p>
+                        <p><strong>Guests:</strong> {{ booking.guests }}</p>
+                        <p><strong>Nights:</strong> {{ booking.num_nights }}</p>
+                    </div>
+                    <div>
+                        <p><strong>Special Requests:</strong> {{ booking.special_requests or 'None' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Information -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2"><i class="fas fa-pound-sign"></i> Pricing</h3>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p><strong>Base Price:</strong> £{{ booking.base_price|default(0)|float }}</p>
+                            <p><strong>Peak Surcharge:</strong> £{{ booking.peak_surcharge|default(0)|float }}</p>
+                            <p><strong>Room Type Surcharge:</strong> £{{ booking.room_type_surcharge|default(0)|float }}</p>
+                            <p><strong>Guest Surcharge:</strong> £{{ booking.guest_surcharge|default(0)|float }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p><strong>Subtotal:</strong> £{{ booking.subtotal|default(0)|float }}</p>
+                            <p><strong>Advance Discount:</strong> {{ booking.advance_discount_percent|default(0)|float }}%</p>
+                            <p><strong>Discount Amount:</strong> £{{ booking.advance_discount_amount|default(0)|float }}</p>
+                            <p class="text-xl font-bold text-green-600">
+                                <strong>Total Price:</strong> £{{ booking.total_price|default(0)|float }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-4">
+                {% if booking.status == 'pending' %}
+                <a href="{{ url_for('confirm_booking_admin', booking_id=booking.booking_id) }}" 
+                   class="admin-btn admin-btn-success"
+                   onclick="return confirm('Confirm booking #{{ booking.booking_id }}?')">
+                    <i class="fas fa-check"></i> Confirm Booking
+                </a>
+                {% endif %}
+                
+                {% if booking.status == 'confirmed' %}
+                <a href="{{ url_for('cancel_booking_admin', booking_id=booking.booking_id) }}" 
+                   class="admin-btn admin-btn-danger"
+                   onclick="return confirm('Cancel booking #{{ booking.booking_id }}?')">
+                    <i class="fas fa-times"></i> Cancel Booking
+                </a>
+                {% endif %}
+                
+                <button class="admin-btn admin-btn-secondary" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

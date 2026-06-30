@@ -1,0 +1,359 @@
+/* Receipt CSS */
+.receipt-container {
+    max-width: 800px;
+    margin: 125px auto;
+    padding: 40px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    border: 1px solid #eaeaea;
+    font-family: 'Playfair Display', serif;
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid  #c9a961;
+}
+
+.receipt-header h1 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 2.2em;
+    font-weight: 600;
+}
+
+.receipt-id {
+    font-size: 1.3em;
+    color: #666;
+    background: #f8f9fa;
+    padding: 12px 25px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.receipt-date {
+    color: #666;
+    font-size: 1.1em;
+    margin-top: 10px;
+}
+
+/* Detail Sections */
+.detail-section {
+    margin-bottom: 35px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #eee;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-size: 1.4em;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid  #c9a961;
+    font-weight: 600;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px dashed #eee;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    color: #666;
+    font-weight: 600;
+    min-width: 180px;
+}
+
+.detail-value {
+    color: #2c3e50;
+    font-weight: 500;
+    text-align: right;
+    word-break: break-word;
+    max-width: 60%;
+}
+
+/* Price Breakdown */
+.price-breakdown {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.price-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed #ddd;
+}
+
+.price-item:last-child {
+    border-bottom: none;
+}
+
+.price-total {
+    background: #e8f5e9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.price-total .price-item {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #2c3e50;
+    border-bottom: none;
+    padding: 15px 0;
+}
+
+/* Special Requests */
+.special-requests {
+    background: #fff3cd;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+    margin-top: 10px;
+}
+
+.special-requests p {
+    margin: 0;
+    color: #856404;
+    line-height: 1.6;
+}
+
+/* Booking Status */
+.booking-status-section {
+    text-align: center;
+    margin: 30px 0;
+    padding: 25px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.status-confirmed {
+    background: #d4edda;
+    color: #155724;
+    border: 2px solid #c3e6cb;
+}
+
+.status-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+    border: 2px solid #f5c6cb;
+}
+
+.status-completed {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 2px solid #bee5eb;
+}
+
+.cancellation-info {
+    color: #666;
+    font-size: 0.95em;
+    margin-top: 10px;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 40px 0;
+    flex-wrap: wrap;
+}
+
+.btn-print, .btn-back {
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+}
+
+.btn-print {
+    background: linear-gradient(135deg,  #c9a961);
+    color: white;
+}
+
+.btn-print:hover {
+    background: linear-gradient(135deg,  #c9a961);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+}
+
+.btn-back {
+    background: #f8f9fa;
+    color: #2c3e50;
+    border: 2px solid #ddd;
+}
+
+.btn-back:hover {
+    background: #e9ecef;
+    border-color: #3498db;
+    color: #3498db;
+    transform: translateY(-2px);
+}
+
+/* Footer */
+.receipt-footer {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+    color: #666;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+.receipt-footer p {
+    margin: 8px 0;
+}
+
+.receipt-note {
+    font-style: italic;
+    color: #888;
+    margin-top: 20px !important;
+    font-size: 0.9em;
+}
+
+/* Print Styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    .receipt-container, .receipt-container * {
+        visibility: visible;
+    }
+    
+    .receipt-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        box-shadow: none;
+        border: none;
+    }
+    
+    .action-buttons {
+        display: none;
+    }
+    
+    .receipt-footer {
+        page-break-inside: avoid;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .receipt-container {
+        padding: 20px;
+        margin: 20px;
+    }
+    
+    .receipt-header h1 {
+        font-size: 1.8em;
+    }
+    
+    .detail-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .detail-label {
+        min-width: auto;
+    }
+    
+    .detail-value {
+        text-align: left;
+        max-width: 100%;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-print, .btn-back {
+        width: 100%;
+    }
+
+}
+
+@media (max-width: 480px) {
+    .receipt-container {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .receipt-header {
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+    }
+    
+    .receipt-header h1 {
+        font-size: 1.5em;
+    }
+    
+    .receipt-id {
+        font-size: 1.1em;
+        padding: 10px 15px;
+    }
+    
+    .section-title {
+        font-size: 1.2em;
+    }
+    
+    .price-breakdown {
+        padding: 15px;
+    }
+    
+}
+.btn-success {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #219653;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}

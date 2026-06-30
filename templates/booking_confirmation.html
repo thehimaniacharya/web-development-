@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Confirmation - {{ hotel.title }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/booking.css') }}">
+<style>
+.confirmation-container {
+    max-width: 800px;
+    margin: 125px auto;
+    padding: 0 20px;
+}
+
+.confirmation-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.confirmation-header {
+    background: linear-gradient(135deg,  #c9a961,  #c9a961);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.confirmation-header h1 {
+    margin: 0;
+    font-size: 2.5em;
+    font-weight: 600;
+}
+
+.confirmation-subtitle {
+    font-size: 1.2em;
+    opacity: 0.9;
+    margin-top: 10px;
+}
+
+.confirmation-body {
+    padding: 40px;
+}
+
+.hotel-info-section {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.hotel-name {
+    font-size: 1.8em;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.hotel-location {
+    color: #666;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.booking-summary {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.summary-value {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.pricing-breakdown {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    border: 2px solid #f1f2f6;
+    margin-bottom: 30px;
+}
+
+.breakdown-title {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px dashed #eee;
+}
+
+.breakdown-item:last-child {
+    border-bottom: none;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #2c3e50;
+    padding-top: 15px;
+    margin-top: 10px;
+    border-top: 2px solid #ddd;
+}
+
+.breakdown-label {
+    color: #555;
+}
+
+.breakdown-value {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.user-info-section {
+    background: #e8f4fc;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.info-item {
+    padding: 10px 0;
+}
+
+.info-label {
+    color: #555;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1em;
+}
+
+.actions-section {
+    display: flex;
+    gap: 20px;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 2px solid #eee;
+}
+
+.btn {
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #27ae60, #219653);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #219653, #1e8747);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #2c3e50;
+    border: 2px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.booking-status {
+    display: inline-block;
+    padding: 8px 20px;
+    background: #e8f5e9;
+    color: #27ae60;
+    border-radius: 20px;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.season-badge {
+    display: inline-block;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.peak-season {
+    background: #ff6b6b;
+    color: white;
+}
+
+.offpeak-season {
+    background: #4ecdc4;
+    color: white;
+}
+
+.discount-badge {
+    background: #ffeaa7;
+    color: #d35400;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+.calculation-note {
+    background: #fff3cd;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 25px;
+    border-left: 4px solid #ffc107;
+}
+
+.info-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 25px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .confirmation-body {
+        padding: 20px;
+    }
+    
+    .confirmation-header h1 {
+        font-size: 2em;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions-section {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="confirmation-container">
+    <!-- Booking Confirmation Card -->
+    <div class="confirmation-card">
+        <!-- Header -->
+        <div class="confirmation-header">
+            <h1><i class="fas fa-check-circle"></i> Booking Confirmation</h1>
+            <p class="confirmation-subtitle">Review your booking details before final confirmation</p>
+        </div>
+        
+        <!-- Body -->
+        <div class="confirmation-body">
+            <!-- Hotel Information -->
+            <div class="hotel-info-section">
+                <h2 class="hotel-name">{{ hotel.title }}</h2>
+                <p class="hotel-location">
+                    <i class="fas fa-map-marker-alt"></i> {{ hotel.city }}
+                    {% if pricing.is_peak_season %}
+                        <span class="season-badge peak-season">Peak Season</span>
+                    {% else %}
+                        <span class="season-badge offpeak-season">Off-Peak Season</span>
+                    {% endif %}
+                </p>
+            </div>
+            
+            <!-- User Information -->
+            <div class="user-info-section">
+                <h3 class="breakdown-title">Your Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value">{{ session.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">{{ session.email if session.email else session.username + '@example.com' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Booking Date:</span>
+                        <span class="info-value">{{ now.strftime('%d %b %Y') }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Booking Status:</span>
+                        <span class="info-value"><span class="booking-status">Pending Confirmation</span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Booking Summary -->
+            <div class="booking-summary">
+                <h3 class="breakdown-title">Booking Summary</h3>
+                
+                <div class="summary-row">
+                    <span class="summary-label">Room Type:</span>
+                    <span class="summary-value">
+                        {{ room_type|title }} Room
+                        {% if room_type == 'double' %}
+                            (20% more than Standard)
+                        {% elif room_type == 'family' %}
+                            (50% more than Standard)
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <div class="summary-row">
+                    <span class="summary-label">Number of Guests:</span>
+                    <span class="summary-value">{{ num_guests }} Guest(s)</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span class="summary-label">Check-in Date:</span>
+                    <span class="summary-value">{{ check_in }}</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span class="summary-label">Check-out Date:</span>
+                    <span class="summary-value">{{ check_out }}</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span class="summary-label">Number of Nights:</span>
+                    <span class="summary-value">{{ num_nights }} Night(s)</span>
+                </div>
+            </div>
+            
+            <!-- Price Breakdown -->
+            <div class="pricing-breakdown">
+                <h3 class="breakdown-title">Price Breakdown</h3>
+                
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Standard Price per Night:</span>
+                    <span class="breakdown-value">{{ pricing.standard_price_fmt }}</span>
+                </div>
+                
+                {% if pricing.peak_surcharge > 0 %}
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Peak Season Surcharge (30%):</span>
+                    <span class="breakdown-value">{{ pricing.peak_surcharge_fmt }}</span>
+                </div>
+                {% endif %}
+                
+                {% if pricing.room_type_surcharge > 0 %}
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Room Type Surcharge ({{ pricing.room_type_multiplier }}%):</span>
+                    <span class="breakdown-value">{{ pricing.room_type_surcharge_fmt }}</span>
+                </div>
+                {% endif %}
+                
+                {% if pricing.guest_surcharge > 0 %}
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Additional Guest Surcharge (10%):</span>
+                    <span class="breakdown-value">{{ pricing.guest_surcharge_fmt }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Price per Night:</span>
+                    <span class="breakdown-value">{{ pricing.price_per_night_fmt }}</span>
+                </div>
+                
+                <div class="breakdown-item">
+                    <span class="breakdown-label">{{ num_nights }} Night(s) Subtotal:</span>
+                    <span class="breakdown-value">{{ pricing.subtotal_fmt }}</span>
+                </div>
+                
+                {% if pricing.discount_percent > 0 %}
+                <div class="breakdown-item">
+                    <span class="breakdown-label">
+                        Advance Booking Discount ({{ pricing.discount_percent }}%)
+                        <span class="discount-badge">{{ pricing.discount_name }}</span>
+                    </span>
+                    <span class="breakdown-value">-{{ pricing.advance_discount_fmt }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Total Price:</span>
+                    <span class="breakdown-value" style="color: #27ae60; font-size: 1.3em;">{{ pricing.total_price_fmt }}</span>
+                </div>
+            </div>
+            
+            <!-- Important Notes -->
+            <div class="calculation-note">
+                <i class="fas fa-info-circle"></i> 
+                <strong>Important:</strong> This is a booking confirmation. Your booking will be confirmed 
+                after you click "Confirm & Pay". Prices include all applicable taxes and fees.
+                {% if pricing.days_in_advance > 0 %}
+                You're booking {{ pricing.days_in_advance }} days in advance.
+                {% endif %}
+            </div>
+            
+            <!-- Terms & Conditions -->
+            <div class="info-box">
+                <h4><i class="fas fa-shield-alt"></i> Terms & Conditions</h4>
+                <p>• By clicking "Confirm & Pay", you agree to our <a href="{{ url_for('terms') }}" target="_blank">Terms & Conditions</a> and <a href="{{ url_for('privacy') }}" target="_blank">Privacy Policy</a>.</p>
+                <p>• Free cancellation up to 60 days before check-in. Cancellation charges apply as per our policy.</p>
+                <p>• Check-in time: 3:00 PM | Check-out time: 11:00 AM</p>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="actions-section">
+                <a href="{{ url_for('booking_hotel', hotel_id=hotel.hotel_id, room_type=room_type, check_in=check_in, check_out=check_out, num_guests=num_guests) }}" 
+                   class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Modify Booking
+                </a>
+                
+                <a href="{{ url_for('create_booking', hotel_id=hotel.hotel_id, room_type=room_type, check_in=check_in, check_out=check_out, num_guests=num_guests) }}" 
+                   class="btn btn-primary" id="confirm-booking-btn">
+                    <i class="fas fa-lock"></i> Confirm & Pay {{ pricing.total_price_fmt }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmBtn = document.getElementById('confirm-booking-btn');
+    
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function(e) {
+            // Show loading state
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            confirmBtn.disabled = true;
+            
+            console.log('Booking confirmed, proceeding to payment...');
+        });
+    }
+});
+</script>
+{% endblock %}

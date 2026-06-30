@@ -1,0 +1,371 @@
+<!-- templates/admin/dashboard.html -->
+{% extends 'admin/base.html' %}
+
+{% block head %}
+<title>Admin Dashboard - WorldHotel</title>
+<!-- Add website button CSS -->
+<style>
+    /* Website Button Styles */
+    .btn-website {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+        font-size: 14px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-website::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+    
+    .btn-website:hover::before {
+        left: 100%;
+    }
+    
+    .btn-website:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+    }
+    
+    .btn-website i {
+        font-size: 16px;
+        transition: transform 0.3s;
+    }
+    
+    .btn-website:hover i {
+        transform: translateX(3px);
+    }
+    
+    /* Header Top Layout */
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .header-left {
+        flex: 1;
+    }
+    
+    .header-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    /* Floating Website Button */
+    .float-website-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        transition: all 0.3s;
+        z-index: 1000;
+        font-size: 24px;
+    }
+    
+    .float-website-btn:hover {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .header-top {
+            flex-direction: column;
+        }
+        
+        .header-actions {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .float-website-btn {
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="admin-container fade-in">
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="header-top">
+            <div class="header-left">
+                <h1><i class="fas fa-hotel"></i> WORLDHOTEL ADMINISTRATION</h1>
+                <p><i class="fas fa-user-shield"></i> Welcome back, {{ session.get('username', 'Administrator') }} | <i class="far fa-clock"></i> Last login: Today</p>
+            </div>
+            <div class="header-actions">
+                <!-- View Website Button -->
+                <a href="{{ url_for('index') }}" class="btn-website">
+                    <i class="fas fa-external-link-alt"></i> View Website
+                </a>
+                <!-- Logout Button -->
+                <a href="{{ url_for('logout') }}" class="admin-btn admin-btn-secondary" style="padding: 12px 24px;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Navigation -->
+    <div class="admin-nav">
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-link active">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a href="{{ url_for('manage_hotels') }}" class="nav-link">
+            <i class="fas fa-hotel"></i> Hotels
+        </a>
+        <a href="{{ url_for('manage_rooms') }}" class="nav-link">
+            <i class="fas fa-bed"></i> Rooms
+        </a>
+        <a href="{{ url_for('manage_bookings') }}" class="nav-link">
+            <i class="fas fa-calendar-check"></i> Bookings
+        </a>
+        <a href="{{ url_for('manage_users') }}" class="nav-link">
+            <i class="fas fa-users"></i> Users
+        </a>
+        <a href="{{ url_for('admin_reports') }}" class="nav-link">
+            <i class="fas fa-chart-bar"></i> Reports
+        </a>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4><i class="fas fa-users"></i> Total Users</h4>
+            <div class="stat-number"><i class="fas fa-user-friends"></i> {{ total_users or 0 }}</div>
+            <div class="stat-trend"><i class="fas fa-arrow-up"></i> Active</div>
+        </div>
+        <div class="stat-card">
+            <h4><i class="fas fa-calendar-alt"></i> Active Bookings</h4>
+            <div class="stat-number"><i class="fas fa-clipboard-list"></i> {{ total_bookings or 0 }}</div>
+            <div class="stat-trend"><i class="fas fa-calendar-day"></i> This Month</div>
+        </div>
+        <div class="stat-card">
+            <h4><i class="fas fa-pound-sign"></i> Revenue (GBP)</h4>
+            <div class="stat-number"><i class="fas fa-money-bill-wave"></i> £{{ total_revenue or 0 }}</div>
+            <div class="stat-trend"><i class="fas fa-chart-line"></i> +12.5%</div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <!-- Website Button (Alternative Location) -->
+        <a href="{{ url_for('index') }}" class="admin-btn admin-btn-website" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+            <i class="fas fa-globe"></i> Visit Main Website
+        </a>
+        
+        <a href="{{ url_for('manage_currencies') }}" class="admin-btn admin-btn-secondary">
+            <i class="fas fa-money-bill-alt"></i> Manage Currencies
+        </a>
+        
+        <!-- Other Quick Actions -->
+        <a href="{{ url_for('add_hotel') }}" class="admin-btn admin-btn-success">
+            <i class="fas fa-plus-circle"></i> Add New Hotel
+        </a>
+        
+        <a href="{{ url_for('add_room') }}" class="admin-btn admin-btn-success">
+            <i class="fas fa-bed"></i> Add New Room
+        </a>
+    </div>
+
+    <!-- Recent Bookings Table -->
+    <div class="data-table">
+        <div class="table-header">
+            <i class="fas fa-history"></i> Recent Bookings
+        </div>
+        <div class="table-content">
+            {% if recent_bookings %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> Booking ID</th>
+                            <th><i class="fas fa-user"></i> Customer</th>
+                            <th><i class="fas fa-hotel"></i> Hotel</th>
+                            <th><i class="fas fa-calendar"></i> Check-in</th>
+                            <th><i class="fas fa-pound-sign"></i> Amount</th>
+                            <th><i class="fas fa-circle"></i> Status</th>
+                            <th><i class="fas fa-cog"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in recent_bookings[:5] %}
+                        <tr>
+                            <td>#{{ booking.booking_id }}</td>
+                            <td>{{ booking.customer_name }}</td>
+                            <td>{{ booking.hotel_name }}</td>
+                            <td>{{ booking.check_in_formatted or booking.check_in }}</td>
+                            <td>£{{ booking.total_price }}</td>
+                            <td>
+                                {% if booking.status == 'confirmed' %}
+                                <span class="status-badge badge-success"><i class="fas fa-check"></i> Confirmed</span>
+                                {% elif booking.status == 'pending' %}
+                                <span class="status-badge badge-warning"><i class="fas fa-clock"></i> Pending</span>
+                                {% else %}
+                                <span class="status-badge badge-danger"><i class="fas fa-times"></i> Cancelled</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="action-btns">
+                                    <!-- View Button -->
+                                    <a href="{{ url_for('view_booking_details', booking_id=booking.booking_id) }}" 
+                                       class="btn-icon btn-icon-view" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    
+                                    <!-- Confirm Button (only for pending bookings) -->
+                                    {% if booking.status == 'pending' %}
+                                    <a href="{{ url_for('confirm_booking_admin', booking_id=booking.booking_id) }}" 
+                                       class="btn-icon btn-icon-success" title="Confirm Booking"
+                                       onclick="return confirm('Are you sure you want to confirm booking #{{ booking.booking_id }}?')">
+                                        <i class="fas fa-check"></i>
+                                    </a>
+                                    {% endif %}
+                                    
+                                    <!-- Cancel Button (only for confirmed bookings) -->
+                                    {% if booking.status == 'confirmed' %}
+                                    <a href="{{ url_for('cancel_booking_admin', booking_id=booking.booking_id) }}" 
+                                       class="btn-icon btn-icon-danger" title="Cancel Booking"
+                                       onclick="return confirm('Are you sure you want to cancel booking #{{ booking.booking_id }}?')">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                    {% endif %}
+                                    
+                                    <!-- Edit Button -->
+                                    <button class="btn-icon btn-icon-edit" title="Edit Booking" 
+                                            onclick="alert('Edit feature coming soon!')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times fa-3x"></i>
+                    <h3>No recent bookings</h3>
+                    <p>Bookings will appear here once made by customers</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Floating Website Button (Optional) -->
+    <a href="{{ url_for('index') }}" class="float-website-btn" title="Go to Main Website">
+        <i class="fas fa-external-link-alt"></i>
+    </a>
+</div>
+
+<!-- Optional: Add some JavaScript for button animations -->
+<script>
+    // Add animation to website button on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const websiteBtn = document.querySelector('.btn-website');
+        if (websiteBtn) {
+            websiteBtn.style.animation = 'bounceIn 0.6s ease';
+        }
+        
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounceIn {
+                0% { transform: scale(0.8); opacity: 0; }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            
+            .admin-btn-website {
+                background: linear-gradient(135deg, #f59e0b, #d97706);
+                color: white;
+                padding: 14px 28px;
+                border-radius: 12px;
+                font-weight: 600;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                transition: all 0.4s;
+                border: none;
+                cursor: pointer;
+                box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+            }
+            
+            .admin-btn-website:hover {
+                background: linear-gradient(135deg, #d97706, #b45309);
+                transform: translateY(-4px);
+                box-shadow: 0 8px 22px rgba(245, 158, 11, 0.4);
+            }
+            
+            .admin-btn-success {
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: white;
+                padding: 14px 28px;
+                border-radius: 12px;
+                font-weight: 600;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                transition: all 0.4s;
+                border: none;
+                cursor: pointer;
+                box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+            }
+            
+            .admin-btn-success:hover {
+                background: linear-gradient(135deg, #059669, #047857);
+                transform: translateY(-4px);
+                box-shadow: 0 8px 22px rgba(16, 185, 129, 0.4);
+            }
+            
+            .quick-actions {
+                display: flex;
+                gap: 15px;
+                margin: 30px 0;
+                flex-wrap: wrap;
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+{% endblock %}

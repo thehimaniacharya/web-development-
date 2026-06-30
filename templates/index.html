@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<!-- FIRST SECTION : VIDEO HERO -->
+<section id="home" class="hero">
+    <video class="video-background" autoplay muted loop playsinline>
+        <source src="{{ url_for('serve_video', filename='hotel-video-2-2-2-2.mp4') }}" type="video/mp4">    
+     </video>
+    <div class="hero-content">
+        <h1>Luxury & Comfort, Every Stay</h1>
+        <p>Experience peaceful nights, warm hospitality, and unforgettable moments.</p>
+    </div> 
+
+</section>
+
+
+<!-- SECOND SECTION : WHITE LUXURY SECTION (SS 1) -->
+<section class="luxury-hero">
+    <div class="container">
+    <div class="luxury-content">
+
+        <p class="hero-subtitle">WELCOME TO WORLD HOTELS</p>
+
+        <h1 class="hero-title">
+            Where Every Stay Feels Like Home
+        </h1>
+
+        <div class="hero-line"></div>
+
+        <p class="hero-text">
+            Welcome to our luxury hotels and resorts.
+            Experience stylish rooms, world-class amenities, and warm hospitality
+            that makes every visit unforgettable.
+        </p>
+
+    </div>
+</div>
+</section>
+<!-- TRENDING HOTELS SECTION -->
+<section class="trending-hotels-section">
+    <div class="trending-container">
+        <div class="section-header">
+            <h2>Trending Hotels</h2>
+            <div class="underline"></div>
+        </div>
+        
+        <div id="trendingHotelsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#trendingHotelsCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#trendingHotelsCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#trendingHotelsCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#trendingHotelsCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                <button type="button" data-bs-target="#trendingHotelsCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+                <button type="button" data-bs-target="#trendingHotelsCarousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
+            </div>
+            
+            <div class="carousel-inner">
+                <!-- London -->
+                <div class="carousel-item active">
+                    <img src="{{ url_for('static', filename='images/hotels/london.jpg') }}" class="d-block w-100" alt="London Hotel">
+                    <div class="hotel-info-overlay">
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>LONDON, UNITED KINGDOM</span>
+                        </div>
+                        <h3>London Luxury Suites</h3>
+                        <p>Modern elegance in the heart of London with panoramic city views and premium service.</p>
+                        <a href="{{ url_for('hotels') }}" class="explore-link">EXPLORE</a>
+                    </div>
+                </div>
+                
+                <!-- Edinburgh -->
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='images/hotels/edinburgh.jpg') }}" class="d-block w-100" alt="Edinburgh Hotel">
+                    <div class="hotel-info-overlay">
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>EDINBURGH, SCOTLAND</span>
+                        </div>
+                        <h3>Edinburgh Castle View Hotel</h3>
+                        <p>Immerse yourself in Scottish heritage with breathtaking castle views and historic charm.</p>
+                        <a href="{{ url_for('hotels') }}" class="explore-link">EXPLORE</a>
+                    </div>
+                </div>
+                
+                <!-- Manchester -->
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='images/hotels/manchester.jpg') }}" class="d-block w-100" alt="Manchester Hotel">
+                    <div class="hotel-info-overlay">
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>MANCHESTER, ENGLAND</span>
+                        </div>
+                        <h3>Manchester Metropolitan Hotel</h3>
+                        <p>Stay in the vibrant heart of Manchester's cultural quarter with world-class amenities.</p>
+                        <a href="{{ url_for('hotels') }}" class="explore-link">EXPLORE</a>
+                    </div>
+                </div>
+                
+                <!-- Cardiff -->
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='images/hotels/cardiff.jpg') }}" class="d-block w-100" alt="Cardiff Hotel">
+                    <div class="hotel-info-overlay">
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>CARDIFF, WALES</span>
+                        </div>
+                        <h3>Cardiff Bay Luxury Suites</h3>
+                        <p>Discover Welsh hospitality at its finest with stunning waterfront views and contemporary design.</p>
+                        <a href="{{ url_for('hotels') }}" class="explore-link">EXPLORE</a>
+                    </div>
+                </div>
+                
+                <!-- Oxford -->
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='images/hotels/oxford.jpg') }}" class="d-block w-100" alt="Oxford Hotel">
+                    <div class="hotel-info-overlay">
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>OXFORD, ENGLAND</span>
+                        </div>
+                        <h3>Oxford Heritage Hotel</h3>
+                        <p>Experience the timeless beauty of Oxford with refined accommodations steeped in academic tradition.</p>
+                        <a href="{{ url_for('hotels') }}" class="explore-link">EXPLORE</a>
+                    </div>
+                </div>
+                
+                <!-- Bristol -->
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='images/hotels/bristol.jpg') }}" class="d-block w-100" alt="Bristol Hotel">
+                    <div class="hotel-info-overlay">
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>BRISTOL, ENGLAND</span>
+                        </div>
+                        <h3>Bristol Harbourside Retreat</h3>
+                        <p>Enjoy coastal charm and urban sophistication with stunning harbor views and exceptional service.</p>
+                        <a href="{{ url_for('hotels') }}" class="explore-link">EXPLORE</a>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="carousel-control-prev" type="button" data-bs-target="#trendingHotelsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#trendingHotelsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+
+<!-- HOTEL GALLERY SECTION -->
+<section class="hotel-gallery-section">
+    <div class="gallery-container">
+        <div class="gallery-header">
+            <h2>Our Gallery</h2>
+            <div class="underline"></div>
+            <p class="gallery-subtitle">Discover the Elegance Within</p>
+        </div>
+
+        <!-- Category Filter Tabs -->
+        <div class="gallery-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="lobby">Lobby</button>
+            <button class="filter-btn" data-filter="bedroom">Bedrooms</button>
+            <button class="filter-btn" data-filter="kitchen">Kitchen</button>
+            <button class="filter-btn" data-filter="pool">Swimming Pool</button>
+            <button class="filter-btn" data-filter="spa">Spa</button>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid">
+            <!-- Lobby Images (2) -->
+            <div class="gallery-item" data-category="lobby">
+                <img src="{{ url_for('static', filename='images/gallery/lobby1.jpg') }}" alt="Lobby">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Lobby</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="lobby">
+                <img src="{{ url_for('static', filename='images/gallery/lobby2.jpg') }}" alt="Lobby">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Lobby</span>
+                </div>
+            </div>
+
+            <!-- Bedroom Images (2) -->
+            <div class="gallery-item" data-category="bedroom">
+                <img src="{{ url_for('static', filename='images/gallery/bedroom1.jpg') }}" alt="Bedroom">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Bedroom</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="bedroom">
+                <img src="{{ url_for('static', filename='images/gallery/bedroom.jpg') }}" alt="Bedroom">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Bedroom</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="bedroom">
+                <img src="{{ url_for('static', filename='images/gallery/bedroom3.jpg') }}" alt="Bedroom">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Bedroom</span>
+                </div>
+            </div>
+
+            <!-- Kitchen Image (1) -->
+            <div class="gallery-item" data-category="kitchen">
+                <img src="{{ url_for('static', filename='images/gallery/food.jpg') }}" alt="Kitchen">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Kitchen</span>
+                </div>
+            </div>
+
+            <!-- Kitchen Image (2) -->
+            <div class="gallery-item" data-category="kitchen">
+                <img src="{{ url_for('static', filename='images/gallery/food2.jpg') }}" alt="Kitchen">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Kitchen</span>
+                </div>
+            </div>
+
+            <!-- Swimming Pool Images (2) -->
+            <div class="gallery-item" data-category="pool">
+                <img src="{{ url_for('static', filename='images/gallery/pool1.jpg') }}" alt="Swimming Pool">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Swimming Pool</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="pool">
+                <img src="{{ url_for('static', filename='images/gallery/pool2.jpg') }}" alt="Swimming Pool">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Swimming Pool</span>
+                </div>
+            </div>
+
+            <!-- Spa Image (1) -->
+            <div class="gallery-item" data-category="spa">
+                <img src="{{ url_for('static', filename='images/gallery/spa.jpg') }}" alt="Spa">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Spa</span>
+                </div>
+            </div>
+            <!-- Spa Image (2) -->
+            <div class="gallery-item" data-category="spa">
+                <img src="{{ url_for('static', filename='images/gallery/spa2.jpg') }}" alt="Spa">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">Spa</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NEWSLETTER SECTION -->
+<section class="newsletter-section">
+    <div class="newsletter-container">
+        <div class="newsletter-header">
+            <h2>STAY CONNECTED</h2>
+            <div class="newsletter-underline"></div>
+        </div>
+        
+        <div class="newsletter-content">
+            <h3>Subscribe to Our Newsletter</h3>
+            <p>Join our community and be the first to receive exclusive offers, luxury insights, and privileged access to World Hotels experiences.</p>
+            
+            <form class="newsletter-form">
+                <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Your email address" required>
+                    <button type="submit" class="subscribe-btn">SUBSCRIBE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div id="lightbox" class="lightbox">
+    <span class="lightbox-close">&times;</span>
+    <img class="lightbox-content" id="lightbox-img">
+    <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+
+<script>
+const filterBtns = document.querySelectorAll('.filter-btn');
+const galleryItems = document.querySelectorAll('.gallery-item');
+
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const filterValue = btn.getAttribute('data-filter');
+        
+        galleryItems.forEach(item => {
+            if (filterValue === 'all') {
+                item.style.display = 'block';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'scale(1)';
+                }, 10);
+            } else {
+                if (item.getAttribute('data-category') === filterValue) {
+                    item.style.display = 'block';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'scale(1)';
+                    }, 10);
+                } else {
+                    item.style.opacity = '0';
+                    item.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        item.style.display = 'none';
+                    }, 300);
+                }
+            }
+        });
+    });
+});
+
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxCaption = document.getElementById('lightbox-caption');
+const lightboxClose = document.querySelector('.lightbox-close');
+
+galleryItems.forEach(item => {
+    item.addEventListener('click', () => {
+        const img = item.querySelector('img');
+        const category = item.querySelector('.gallery-category').textContent;
+        
+        lightbox.style.display = 'flex';
+        lightboxImg.src = img.src;
+        lightboxCaption.textContent = category;
+        
+        document.body.style.overflow = 'hidden';
+    });
+});
+
+lightboxClose.addEventListener('click', () => {
+    lightbox.style.display = 'none';
+    document.body.style.overflow = 'auto';
+});
+
+lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) {
+        lightbox.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox.style.display === 'flex') {
+        lightbox.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+});
+</script>
+
+{% endblock %}

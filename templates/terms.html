@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Terms & Conditions - WorldHotel{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/terms.css') }}">
+{% endblock %}
+
+{% block body %}
+<!-- Hero Section -->
+<section class="terms-hero">
+    <div>
+        <h1>Terms & Conditions</h1>
+        <div class="terms-hero-date">Last Updated: February 2024</div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="terms-content">
+    <div class="terms-container">
+        <div class="terms-section">
+            <h2>Welcome to WorldHotel</h2>
+            <p>These terms and conditions outline the rules and regulations for the use of WorldHotel's Website, located at worldhotel.com.</p>
+            <p>By accessing this website we assume you accept these terms and conditions. Do not continue to use WorldHotel if you do not agree to take all of the terms and conditions stated on this page.</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>1. Booking & Reservations</h2>
+            
+            <h3>1.1 Reservation Process</h3>
+            <p>All bookings made through WorldHotel are subject to availability and confirmation. We reserve the right to refuse any booking at our discretion.</p>
+            
+            <h3>1.2 Payment Terms</h3>
+            <p>Payments must be made in accordance with the terms specified at the time of booking. We accept the following payment methods:</p>
+            <ul>
+                <li>Credit Cards (Visa, MasterCard, American Express)</li>
+                <li>Debit Cards</li>
+                <li>Bank Transfers</li>
+                <li>Digital Payment Methods</li>
+            </ul>
+            
+            <h3>1.3 Cancellation Policy</h3>
+            <p>Cancellations must be made at least 48 hours before the scheduled check-in time. Cancellations made within 48 hours will incur a charge equivalent to one night's stay.</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>2. Guest Responsibilities</h2>
+            
+            <h3>2.1 Check-in & Check-out</h3>
+            <p>Standard check-in time is 3:00 PM and check-out time is 11:00 AM. Early check-in and late check-out are subject to availability and additional charges.</p>
+            
+            <h3>2.2 Room Usage</h3>
+            <p>Rooms are to be used solely for accommodation purposes. The number of occupants must not exceed the maximum occupancy specified for each room type.</p>
+            
+            <h3>2.3 Damage to Property</h3>
+            <p>Guests will be held responsible for any damage caused to hotel property during their stay. Charges for damages will be applied to the credit card on file.</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>3. Privacy & Data Protection</h2>
+            <p>We are committed to protecting your privacy. Your personal information will be used in accordance with our Privacy Policy and applicable data protection laws.</p>
+            
+            <h3>3.1 Data Collection</h3>
+            <p>We collect personal information necessary for processing your reservation and enhancing your experience with us.</p>
+            
+            <h3>3.2 Data Security</h3>
+            <p>We implement appropriate security measures to protect your personal information from unauthorized access or disclosure.</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>4. Hotel Facilities & Services</h2>
+            
+            <h3>4.1 Amenities</h3>
+            <p>Access to hotel amenities (pool, gym, spa, etc.) is included in your stay unless otherwise specified. Some amenities may have age restrictions or require reservations.</p>
+            
+            <h3>4.2 Restaurant & Dining</h3>
+            <p>Restaurant reservations are recommended. Dress codes may apply in certain dining areas.</p>
+            
+            <h3>4.3 Wi-Fi Access</h3>
+            <p>Complimentary Wi-Fi is provided for guests. Usage is subject to fair use policy and may be limited for security reasons.</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>5. Liability & Limitations</h2>
+            
+            <h3>5.1 Property Loss</h3>
+            <p>WorldHotel is not responsible for loss or damage to personal belongings. Safety deposit boxes are available in rooms and at the front desk.</p>
+            
+            <h3>5.2 Force Majeure</h3>
+            <p>We are not liable for failure to perform our obligations due to circumstances beyond our reasonable control, including natural disasters, strikes, or government restrictions.</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>6. Modifications to Terms</h2>
+            <p>We reserve the right to modify these terms and conditions at any time. Changes will be effective immediately upon posting on the website. Your continued use of our services constitutes acceptance of the modified terms.</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>7. Governing Law</h2>
+            <p>These terms and conditions are governed by and construed in accordance with the laws of the jurisdiction where WorldHotel is headquartered, and you submit to the exclusive jurisdiction of the courts in that location.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

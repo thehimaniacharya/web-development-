@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if booking %}Booking Receipt - Booking #{{ booking.booking_id }}{% else %}Booking Receipt{% endif %}
+{% endblock %}
+
+{% block css %}
+<style>
+.receipt-container {
+    max-width: 800px;
+    margin: 125px auto;
+    padding: 0 20px;
+}
+
+.receipt-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.receipt-header {
+    background: linear-gradient(135deg,  #c9a961,  #c9a961);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.receipt-header h1 {
+    margin: 0;
+    font-size: 2.2em;
+    font-weight: 600;
+}
+
+.booking-id {
+    font-size: 1.3em;
+    margin-top: 10px;
+    opacity: 0.9;
+}
+
+.receipt-body {
+    padding: 30px;
+}
+
+.receipt-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.receipt-section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.detail-item {
+    margin-bottom: 12px;
+}
+
+.detail-label {
+    color: #666;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.detail-value {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1em;
+}
+
+.price-summary {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    margin: 25px 0;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.price-row:last-child {
+    border-bottom: none;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding-top: 15px;
+}
+
+.total-price {
+    color: #27ae60;
+    font-size: 1.3em;
+}
+
+.booking-status {
+    display: inline-block;
+    padding: 8px 20px;
+    background: #e8f5e9;
+    color: #27ae60;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #2c3e50;
+    border: 2px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.info-box {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    margin-top: 25px;
+    border-radius: 4px;
+}
+
+.info-box h4 {
+    margin: 0 0 10px 0;
+    color: #856404;
+}
+
+.info-box p {
+    margin: 5px 0;
+    color: #856404;
+}
+
+.error-message {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+}
+
+.error-message h3 {
+    color: #721c24;
+    margin-top: 0;
+}
+
+@media (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="receipt-container">
+    {% if error %}
+    <div class="error-message">
+        <h3><i class="fas fa-exclamation-triangle"></i> Error Loading Receipt</h3>
+        <p>{{ error }}</p>
+        <div class="actions">
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+            </a>
+            <a href="{{ url_for('hotels') }}" class="btn btn-primary">
+                <i class="fas fa-search"></i> Browse Hotels
+            </a>
+        </div>
+    </div>
+    
+    {% elif not booking %}
+    <div class="error-message">
+        <h3><i class="fas fa-exclamation-triangle"></i> No Booking Found</h3>
+        <p>Sorry, we couldn't find your booking details.</p>
+        <div class="actions">
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+            </a>
+            <a href="{{ url_for('hotels') }}" class="btn btn-primary">
+                <i class="fas fa-search"></i> Browse Hotels
+            </a>
+        </div>
+    </div>
+    
+    {% else %}
+    <div class="receipt-card">
+        <!-- Header -->
+        <div class="receipt-header">
+            <h1><i class="fas fa-check-circle"></i> Booking Confirmed!</h1>
+            <div class="booking-id">
+                Booking ID: <strong>#{{ booking.booking_id }}</strong>
+                <span class="booking-status">{{ booking.status|title }}</span>
+            </div>
+            <p style="margin-top: 15px; opacity: 0.9;">
+                Thank you for your booking! A confirmation has been sent to your email.
+            </p>
+        </div>
+        
+        <!-- Body -->
+        <div class="receipt-body">
+            <!-- Guest Details -->
+            <div class="receipt-section">
+                <h3 class="section-title"><i class="fas fa-user"></i> Guest Details</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Full Name</span>
+                        <span class="detail-value">{{ booking.guest_name or booking.username or 'N/A' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Email Address</span>
+                        <span class="detail-value">{{ booking.guest_email or booking.user_email or 'N/A' }}</span>
+                    </div>
+                    {% if booking.guest_phone %}
+                    <div class="detail-item">
+                        <span class="detail-label">Phone Number</span>
+                        <span class="detail-value">{{ booking.guest_phone }}</span>
+                    </div>
+                    {% endif %}
+                    {% if booking.special_requests %}
+                    <div class="detail-item" style="grid-column: span 2;">
+                        <span class="detail-label">Special Requests</span>
+                        <span class="detail-value">{{ booking.special_requests }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Booking Details -->
+            <div class="receipt-section">
+                <h3 class="section-title"><i class="fas fa-hotel"></i> Booking Details</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Hotel</span>
+                        <span class="detail-value">{{ booking.hotel_name or 'N/A' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Location</span>
+                        <span class="detail-value">{{ booking.city or 'N/A' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Room Type</span>
+                        <span class="detail-value">{{ booking.room_type|title if booking.room_type else 'N/A' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Guests</span>
+                        <span class="detail-value">{{ booking.guests }} person(s)</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Check-in</span>
+                        <span class="detail-value">{{ booking.check_in_formatted or booking.check_in or 'N/A' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Check-out</span>
+                        <span class="detail-value">{{ booking.check_out_formatted or booking.check_out or 'N/A' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">{{ booking.num_nights }} night(s)</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Booking Date</span>
+                        <span class="detail-value">{{ booking.booking_date_full or booking.booking_date or 'N/A' }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Price Summary -->
+            <div class="price-summary">
+                <h3 class="section-title" style="border-bottom-color: #27ae60;"><i class="fas fa-receipt"></i> Price Summary</h3>
+                
+                <div class="price-row">
+                    <span>Base Price</span>
+                    <span>£{{ "%.2f"|format(booking.base_price|float) }}</span>
+                </div>
+                
+                {% if booking.peak_surcharge and booking.peak_surcharge > 0 %}
+                <div class="price-row">
+                    <span>Peak Season Surcharge</span>
+                    <span>£{{ "%.2f"|format(booking.peak_surcharge|float) }}</span>
+                </div>
+                {% endif %}
+                
+                {% if booking.room_type_surcharge and booking.room_type_surcharge > 0 %}
+                <div class="price-row">
+                    <span>Room Type Surcharge</span>
+                    <span>£{{ "%.2f"|format(booking.room_type_surcharge|float) }}</span>
+                </div>
+                {% endif %}
+                
+                {% if booking.guest_surcharge and booking.guest_surcharge > 0 %}
+                <div class="price-row">
+                    <span>Guest Surcharge</span>
+                    <span>£{{ "%.2f"|format(booking.guest_surcharge|float) }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="price-row">
+                    <span>Subtotal</span>
+                    <span>£{{ "%.2f"|format(booking.subtotal|float) }}</span>
+                </div>
+                
+                {% if booking.advance_discount_amount and booking.advance_discount_amount > 0 %}
+                <div class="price-row">
+                    <span>Advance Discount ({{ booking.advance_discount_percent }}%)</span>
+                    <span>-£{{ "%.2f"|format(booking.advance_discount_amount|float) }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="price-row">
+                    <span>Total Amount</span>
+                    <span class="total-price">£{{ "%.2f"|format(booking.total_price|float) }}</span>
+                </div>
+            </div>
+            
+            <!-- Important Information -->
+            <div class="info-box">
+                <h4><i class="fas fa-info-circle"></i> Important Information</h4>
+                <p>• Check-in time: 3:00 PM | Check-out time: 11:00 AM</p>
+                <p>• Please bring this receipt and a valid ID for check-in</p>
+                <p>• For modifications or cancellations, visit "My Bookings" in your dashboard</p>
+                <p>• Contact hotel directly for any special arrangements</p>
+            </div>
+            
+            <!-- Actions -->
+            <div class="actions">
+                <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-tachometer-alt"></i> My Dashboard
+                </a>
+                <a href="{{ url_for('print_receipt', booking_id=booking.booking_id) }}" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-print"></i> Print Receipt
+                </a>
+                <button onclick="downloadReceipt()" class="btn btn-success">
+                    <i class="fas fa-file-pdf"></i> Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+// Download PDF function
+function downloadReceipt() {
+    const receiptCard = document.querySelector('.receipt-card');
+    
+    if (!receiptCard) {
+        alert('Receipt not found!');
+        return;
+    }
+    
+    // Configuration for PDF
+    const opt = {
+        margin: 0.5,
+        filename: 'booking-receipt-{{ booking.booking_id }}.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    
+    const actions = document.querySelector('.actions');
+    if (actions) {
+        actions.style.display = 'none';
+    }
+    
+    // Generate PDF
+    html2pdf().set(opt).from(receiptCard).save().then(() => {
+        if (actions) {
+            actions.style.display = 'flex';
+        }
+    });
+}
+</script>
+{% endblock %}
