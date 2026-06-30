@@ -11,7 +11,7 @@ from functools import wraps
 import threading
 import time
 
-app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path="/")
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
 BASE_URL = "https://24071099.tbcstudentserver.com"
 
@@ -2624,3 +2624,7 @@ def switch_to_admin_view():
     """Allow users to request admin access"""
     flash('Please login as admin to access admin dashboard.', 'info')
     return redirect(url_for('login'))
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
